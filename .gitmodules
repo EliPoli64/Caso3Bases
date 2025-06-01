@@ -1,3 +1,6 @@
 [submodule "APIs/CS"]
 	path = APIs/CS
 	url = https://github.com/EliPoli64/AzureBoilerplateCS.git
+[submodule "APIs/Python"]
+	path = APIs/Python
+	url = https://github.com/EliPoli64/AzureBoilerplatePython.git

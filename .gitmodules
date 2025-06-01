@@ -1,0 +1,3 @@
+[submodule "APIs/CS"]
+	path = APIs/CS
+	url = https://github.com/EliPoli64/AzureBoilerplateCS.git

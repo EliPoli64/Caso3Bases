@@ -1,12 +1,12 @@
 USE [master]
 GO
-/****** Object:  Database [VotoPV]    Script Date: 31/5/2025 09:56:10 ******/
+/****** Object:  Database [VotoPV]    Script Date: 2/6/2025 15:50:02 ******/
 CREATE DATABASE [VotoPV]
  CONTAINMENT = NONE
  ON  PRIMARY 
 ( NAME = N'VotoPV', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\VotoPV.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON 
-( NAME = N'VotoPV_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\VotoPV_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'VotoPV_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\VotoPV_log.ldf' , SIZE = 73728KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
  WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
 GO
 ALTER DATABASE [VotoPV] SET COMPATIBILITY_LEVEL = 160
@@ -84,7 +84,39 @@ ALTER DATABASE [VotoPV] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_PO
 GO
 USE [VotoPV]
 GO
-/****** Object:  Table [dbo].[pv_cantones]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_avalGubernamental]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_avalGubernamental](
+	[avalID] [int] IDENTITY(1,1) NOT NULL,
+	[propuestaID] [int] NOT NULL,
+	[tipoID] [int] NOT NULL,
+	[fechaAval] [datetime] NOT NULL,
+	[descripcion] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[avalID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_boletaRequisitosPropuestas]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_boletaRequisitosPropuestas](
+	[boletaID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [varchar](50) NULL,
+	[tipoPropuestaID] [int] NULL,
+ CONSTRAINT [PK_pv_boletaRequisitosPropuestas] PRIMARY KEY CLUSTERED 
+(
+	[boletaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_cantones]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -99,13 +131,13 @@ CREATE TABLE [dbo].[pv_cantones](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_comentariosPropuesta]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_comentariosPropuesta]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_comentariosPropuesta](
-	[comentarioid] [int] NOT NULL,
+	[comentarioid] [int] IDENTITY(1,1) NOT NULL,
 	[userid] [int] NOT NULL,
 	[fechaPublicación] [datetime] NOT NULL,
 	[comentDetalleid] [varchar](400) NOT NULL,
@@ -117,7 +149,23 @@ CREATE TABLE [dbo].[pv_comentariosPropuesta](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_contact]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_condicionAval]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_condicionAval](
+	[condicionID] [int] IDENTITY(1,1) NOT NULL,
+	[avalID] [int] NOT NULL,
+	[tipoCondicion] [nvarchar](100) NOT NULL,
+	[valorCondicion] [nvarchar](255) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[condicionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_contact]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -135,7 +183,7 @@ CREATE TABLE [dbo].[pv_contact](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_contactType]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_contactType]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -149,7 +197,24 @@ CREATE TABLE [dbo].[pv_contactType](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_criterio]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_contextoIA]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_contextoIA](
+	[contextoId] [int] IDENTITY(1,1) NOT NULL,
+	[embeddingId] [int] NOT NULL,
+	[relacionId] [int] NOT NULL,
+	[entidadId] [int] NOT NULL,
+	[nombreContexto] [varchar](150) NOT NULL,
+ CONSTRAINT [PK_pv_contextoIA] PRIMARY KEY CLUSTERED 
+(
+	[contextoId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_criterio]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -165,7 +230,64 @@ CREATE TABLE [dbo].[pv_criterio](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_detalleSegmento]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_criterioProyecto]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_criterioProyecto](
+	[criterioProyectoID] [int] IDENTITY(1,1) NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[criterioID] [int] NULL,
+	[tipoCriterio] [nvarchar](100) NOT NULL,
+	[valor] [nvarchar](255) NOT NULL,
+	[esRequisito] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[criterioProyectoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_criterioTerritorial]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_criterioTerritorial](
+	[criterioID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [nvarchar](255) NOT NULL,
+	[tipo] [nvarchar](100) NOT NULL,
+	[valor] [nvarchar](100) NOT NULL,
+	[descripcion] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[criterioID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_desembolso]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_desembolso](
+	[desembolsoID] [int] IDENTITY(1,1) NOT NULL,
+	[planID] [int] NOT NULL,
+	[fechaDesembolso] [datetime] NULL,
+	[estado] [nvarchar](50) NOT NULL,
+	[referenciaTransaccion] [nvarchar](100) NULL,
+	[fechaSolicitud] [datetime] NULL,
+	[fechaAprobacion] [datetime] NULL,
+	[aprobadorID] [int] NULL,
+	[comentarios] [nvarchar](max) NULL,
+	[estadoID] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[desembolsoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_detalleSegmento]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -181,7 +303,7 @@ CREATE TABLE [dbo].[pv_detalleSegmento](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_detallesHorarios]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_detallesHorarios]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -200,7 +322,7 @@ CREATE TABLE [dbo].[pv_detallesHorarios](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_direcciones]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_direcciones]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -217,7 +339,7 @@ CREATE TABLE [dbo].[pv_direcciones](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_direccionesUsuarios]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_direccionesUsuarios]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -234,7 +356,7 @@ CREATE TABLE [dbo].[pv_direccionesUsuarios](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_distrito]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_distrito]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -249,7 +371,24 @@ CREATE TABLE [dbo].[pv_distrito](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_educacionUsuario]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_documentoPropuesta]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_documentoPropuesta](
+	[documentoID] [int] IDENTITY(1,1) NOT NULL,
+	[versionID] [int] NOT NULL,
+	[tipoDocumento] [nvarchar](100) NOT NULL,
+	[urlDocumento] [nvarchar](max) NOT NULL,
+	[fechaSubida] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[documentoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_educacionUsuario]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -264,7 +403,25 @@ CREATE TABLE [dbo].[pv_educacionUsuario](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_encuesta]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_embeddingsIA]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_embeddingsIA](
+	[embeddingId] [int] IDENTITY(1,1) NOT NULL,
+	[tipo] [varchar](30) NOT NULL,
+	[embedding] [varchar](max) NOT NULL,
+	[dimensionesVector] [smallint] NOT NULL,
+	[modeloEmbedding] [varchar](50) NOT NULL,
+	[fechaCreacion] [datetime] NOT NULL,
+ CONSTRAINT [PK_pv_embeddingsIA] PRIMARY KEY CLUSTERED 
+(
+	[embeddingId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_encuesta]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -278,13 +435,31 @@ CREATE TABLE [dbo].[pv_encuesta](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_estadoComentarios]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_entidadesIA]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_entidadesIA](
+	[entidadId] [int] IDENTITY(1,1) NOT NULL,
+	[tipo] [varchar](50) NOT NULL,
+	[texto] [varchar](255) NOT NULL,
+	[confianza] [decimal](5, 2) NOT NULL,
+	[posicionInicial] [int] NULL,
+	[posicionFin] [int] NULL,
+ CONSTRAINT [PK_pv_entidadesIA] PRIMARY KEY CLUSTERED 
+(
+	[entidadId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_estadoComentarios]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_estadoComentarios](
-	[estadoComentid] [int] NOT NULL,
+	[estadoComentid] [int] IDENTITY(1,1) NOT NULL,
 	[nombre] [varchar](50) NOT NULL,
  CONSTRAINT [PK_pv_estadoComentarios] PRIMARY KEY CLUSTERED 
 (
@@ -292,13 +467,65 @@ CREATE TABLE [dbo].[pv_estadoComentarios](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_estadoSolicitud]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_estadoDesembolso]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_estadoDesembolso](
+	[estadoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [nvarchar](50) NOT NULL,
+	[descripcion] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[estadoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_estadoPropuesta]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_estadoPropuesta](
+	[estadoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombreEstado] [nvarchar](50) NOT NULL,
+	[descripcion] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[estadoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[nombreEstado] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_estadoProyecto]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_estadoProyecto](
+	[estadoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombreEstado] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[estadoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[nombreEstado] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_estadoSolicitud]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_estadoSolicitud](
-	[estadoid] [int] NOT NULL,
+	[estadoid] [int] IDENTITY(1,1) NOT NULL,
 	[faseSolicitudid] [int] NOT NULL,
 	[inicioFase] [datetime] NOT NULL,
 	[solicitudCambioid] [int] NOT NULL,
@@ -308,7 +535,7 @@ CREATE TABLE [dbo].[pv_estadoSolicitud](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_evento]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_evento]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -326,13 +553,48 @@ CREATE TABLE [dbo].[pv_evento](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_faseComentario]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_evidenciaDesembolso]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_evidenciaDesembolso](
+	[evidenciaID] [int] IDENTITY(1,1) NOT NULL,
+	[desembolsoID] [int] NOT NULL,
+	[tipoDocumento] [nvarchar](100) NOT NULL,
+	[urlDocumento] [nvarchar](max) NOT NULL,
+	[fechaSubida] [datetime] NOT NULL,
+	[subidoPorID] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[evidenciaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_evidenciaIrregularidad]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_evidenciaIrregularidad](
+	[evidenciaID] [int] IDENTITY(1,1) NOT NULL,
+	[reporteID] [int] NOT NULL,
+	[urlEvidencia] [nvarchar](max) NOT NULL,
+	[descripcion] [nvarchar](500) NULL,
+	[fechaSubida] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[evidenciaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_faseComentario]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_faseComentario](
-	[faseComentid] [int] NOT NULL,
+	[faseComentid] [int] IDENTITY(1,1) NOT NULL,
 	[comentarioid] [int] NOT NULL,
 	[estadoComentid] [int] NOT NULL,
 	[fechaInicio] [datetime] NOT NULL,
@@ -343,13 +605,13 @@ CREATE TABLE [dbo].[pv_faseComentario](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_faseSolicitudes]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_faseSolicitudes]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_faseSolicitudes](
-	[faseSolicitudid] [int] NOT NULL,
+	[faseSolicitudid] [int] IDENTITY(1,1) NOT NULL,
 	[nombre] [varchar](10) NOT NULL,
  CONSTRAINT [PK_pv_faseSolicitudes] PRIMARY KEY CLUSTERED 
 (
@@ -357,7 +619,7 @@ CREATE TABLE [dbo].[pv_faseSolicitudes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_faseValidacion]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_faseValidacion]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -374,7 +636,85 @@ CREATE TABLE [dbo].[pv_faseValidacion](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_horarios]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_fiscalizador]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_fiscalizador](
+	[fiscalizadorID] [int] IDENTITY(1,1) NOT NULL,
+	[usuarioID] [int] NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[fechaRegistro] [datetime] NOT NULL,
+	[activo] [bit] NOT NULL,
+	[nivelAcceso] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[fiscalizadorID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_Fiscalizador] UNIQUE NONCLUSTERED 
+(
+	[usuarioID] ASC,
+	[proyectoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_grupoValidador]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_grupoValidador](
+	[grupoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombreGrupo] [nvarchar](255) NOT NULL,
+	[tipoID] [int] NOT NULL,
+	[descripcion] [nvarchar](max) NULL,
+	[fechaCreacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[grupoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[nombreGrupo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_grupoVotacion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_grupoVotacion](
+	[grupoVotacionID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [nvarchar](255) NOT NULL,
+	[descripcion] [nvarchar](max) NULL,
+	[tipoGrupo] [nvarchar](100) NOT NULL,
+	[esSegmentado] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[grupoVotacionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_hook]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_hook](
+	[hookID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [nvarchar](255) NOT NULL,
+	[descripcion] [nvarchar](max) NULL,
+	[evento] [nvarchar](100) NOT NULL,
+	[prioridad] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[hookID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_horarios]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -392,7 +732,7 @@ CREATE TABLE [dbo].[pv_horarios](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_iaAnalisis]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_iaAnalisis]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -406,19 +746,95 @@ CREATE TABLE [dbo].[pv_iaAnalisis](
 	[fechaFinalizacion] [datetime] NOT NULL,
 	[infoid] [int] NOT NULL,
 	[tipoDocumento] [varchar](40) NOT NULL,
+	[contextoID] [int] NOT NULL,
  CONSTRAINT [PK_pv_iaAnalisis] PRIMARY KEY CLUSTERED 
 (
 	[analisisId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_infoIA]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_identidadDigital]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_identidadDigital](
+	[identidadID] [int] IDENTITY(1,1) NOT NULL,
+	[userID] [int] NOT NULL,
+	[fotoCedulaURL] [varchar](255) NOT NULL,
+	[fotoPasaporteURL] [varchar](255) NOT NULL,
+	[fechaValidacion] [date] NOT NULL,
+	[horarioID] [int] NOT NULL,
+ CONSTRAINT [PK_pv_identidadDigital] PRIMARY KEY CLUSTERED 
+(
+	[identidadID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_incentivoGubernamental]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_incentivoGubernamental](
+	[incentivoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [nvarchar](255) NOT NULL,
+	[descripcion] [nvarchar](max) NULL,
+	[entidad] [nvarchar](100) NOT NULL,
+	[tipoBeneficio] [nvarchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[incentivoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_incentivoProyecto]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_incentivoProyecto](
+	[incentivoProyectoID] [int] IDENTITY(1,1) NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[incentivoID] [int] NOT NULL,
+	[estado] [nvarchar](50) NOT NULL,
+	[fechaSolicitud] [datetime] NOT NULL,
+	[fechaResolucion] [datetime] NULL,
+	[votacionID] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[incentivoProyectoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_incumplimiento]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_incumplimiento](
+	[incumplimientoID] [int] IDENTITY(1,1) NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[reporteID] [int] NULL,
+	[tipo] [nvarchar](100) NOT NULL,
+	[descripcion] [nvarchar](max) NOT NULL,
+	[fechaReporte] [datetime] NOT NULL,
+	[reportadoPorID] [int] NOT NULL,
+	[severidad] [nvarchar](50) NOT NULL,
+	[estado] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[incumplimientoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_infoIA]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_infoIA](
-	[infoId] [int] NOT NULL,
+	[infoId] [int] IDENTITY(1,1) NOT NULL,
 	[modeloIA] [varchar](40) NOT NULL,
 	[apiKey] [varchar](256) NOT NULL,
 	[token] [varchar](256) NOT NULL,
@@ -429,16 +845,39 @@ CREATE TABLE [dbo].[pv_infoIA](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_listaBlancaIPs]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_inversion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_inversion](
+	[inversionID] [int] IDENTITY(1,1) NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[inversorID] [int] NOT NULL,
+	[monto] [decimal](18, 2) NOT NULL,
+	[monedaID] [int] NOT NULL,
+	[fechaInversion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[inversionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_listaBlancaIPs]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_listaBlancaIPs](
-	[ipPermitido] [int] NULL
+	[ipPermitido] [int] NULL,
+	[ipID] [int] IDENTITY(1,1) NOT NULL,
+ CONSTRAINT [PK_pv_listaBlancaIPs] PRIMARY KEY CLUSTERED 
+(
+	[ipID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_logOrigen]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_logOrigen]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -452,7 +891,7 @@ CREATE TABLE [dbo].[pv_logOrigen](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_logs]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_logs]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -478,7 +917,7 @@ CREATE TABLE [dbo].[pv_logs](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_logTipos]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_logTipos]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -496,7 +935,7 @@ CREATE TABLE [dbo].[pv_logTipos](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_mediaFiles]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_mediaFiles]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -513,7 +952,7 @@ CREATE TABLE [dbo].[pv_mediaFiles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_mediaTypes]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_mediaTypes]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -528,7 +967,83 @@ CREATE TABLE [dbo].[pv_mediaTypes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_nivelEducacion]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_MFA]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_MFA](
+	[mfaID] [int] IDENTITY(1,1) NOT NULL,
+	[userID] [int] NOT NULL,
+	[tipoMfaID] [int] NOT NULL,
+	[token] [varbinary](500) NOT NULL,
+	[fechaCreacion] [date] NOT NULL,
+	[fechaExpiración] [date] NOT NULL,
+	[horarioID] [int] NOT NULL,
+ CONSTRAINT [PK_pv_MFA] PRIMARY KEY CLUSTERED 
+(
+	[mfaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_moduloExtension]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_moduloExtension](
+	[moduloID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [nvarchar](255) NOT NULL,
+	[descripcion] [nvarchar](max) NULL,
+	[version] [nvarchar](50) NOT NULL,
+	[fechaInstalacion] [datetime] NOT NULL,
+	[activo] [bit] NOT NULL,
+	[configuracion] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[moduloID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_moduloHook]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_moduloHook](
+	[moduloHookID] [int] IDENTITY(1,1) NOT NULL,
+	[moduloID] [int] NOT NULL,
+	[hookID] [int] NOT NULL,
+	[metodo] [nvarchar](255) NOT NULL,
+	[activo] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[moduloHookID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_moneda]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_moneda](
+	[monedaID] [int] IDENTITY(1,1) NOT NULL,
+	[codigo] [char](3) NOT NULL,
+	[nombre] [nvarchar](100) NOT NULL,
+	[simbolo] [nvarchar](10) NOT NULL,
+	[esPredeterminada] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[monedaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[codigo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_nivelEducacion]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -542,7 +1057,7 @@ CREATE TABLE [dbo].[pv_nivelEducacion](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_organizaciones]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_organizaciones]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -553,13 +1068,15 @@ CREATE TABLE [dbo].[pv_organizaciones](
 	[esNacional] [bit] NOT NULL,
 	[logoUrl] [varchar](500) NOT NULL,
 	[tienePermiso] [bit] NOT NULL,
+	[tipoOrganizacionID] [int] NOT NULL,
+	[identificacionTributaria] [varchar](50) NOT NULL,
  CONSTRAINT [PK_pv_organizaciones] PRIMARY KEY CLUSTERED 
 (
 	[organizacionid] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_orgUsuarios]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_orgUsuarios]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -569,13 +1086,35 @@ CREATE TABLE [dbo].[pv_orgUsuarios](
 	[userid] [int] NOT NULL,
 	[organizacionid] [int] NOT NULL,
 	[esActivo] [bit] NOT NULL,
+	[esRepresentanteLegal] [bit] NOT NULL,
+	[rolInterno] [varchar](30) NOT NULL,
  CONSTRAINT [PK_pv_orgUsuarios] PRIMARY KEY CLUSTERED 
 (
 	[orgUsuarioid] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_paises]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_pagoInversor]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_pagoInversor](
+	[pagoID] [int] IDENTITY(1,1) NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[inversorID] [int] NOT NULL,
+	[monto] [decimal](18, 2) NOT NULL,
+	[monedaID] [int] NOT NULL,
+	[fechaProgramada] [datetime] NOT NULL,
+	[fechaPago] [datetime] NULL,
+	[estado] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[pagoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_paises]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -590,7 +1129,7 @@ CREATE TABLE [dbo].[pv_paises](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_permissions]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_permissions]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -605,7 +1144,40 @@ CREATE TABLE [dbo].[pv_permissions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_plataformaAutenticacion]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_pesoRespuesta]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_pesoRespuesta](
+	[pesoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [varchar](50) NOT NULL,
+	[multiplicador] [decimal](14, 2) NULL,
+ CONSTRAINT [PK_pv_pesoRespuesta] PRIMARY KEY CLUSTERED 
+(
+	[pesoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_planDesembolso]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_planDesembolso](
+	[planID] [int] IDENTITY(1,1) NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[numeroCuota] [int] NOT NULL,
+	[fechaProgramada] [datetime] NOT NULL,
+	[monto] [decimal](18, 2) NOT NULL,
+	[monedaID] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[planID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_plataformaAutenticacion]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -622,7 +1194,7 @@ CREATE TABLE [dbo].[pv_plataformaAutenticacion](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_preguntas]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_preguntas]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -638,27 +1210,65 @@ CREATE TABLE [dbo].[pv_preguntas](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_profesiones]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_procesoLegal]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_procesoLegal](
+	[procesoID] [int] IDENTITY(1,1) NOT NULL,
+	[incumplimientoID] [int] NOT NULL,
+	[fechaInicio] [datetime] NOT NULL,
+	[descripcion] [nvarchar](max) NOT NULL,
+	[entidadResponsable] [nvarchar](255) NOT NULL,
+	[estado] [nvarchar](50) NOT NULL,
+	[resultado] [nvarchar](max) NULL,
+	[fechaCierre] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[procesoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_profesiones]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_profesiones](
-	[profesionID] [int] NOT NULL,
+	[profesionID] [int] IDENTITY(1,1) NOT NULL,
 	[nombre] [varchar](50) NOT NULL,
+	[sectorProfesionID] [int] NULL,
  CONSTRAINT [PK_pv_profesiones] PRIMARY KEY CLUSTERED 
 (
 	[profesionID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_propuestaCategoria]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_proponente]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_proponente](
+	[proponenteID] [int] IDENTITY(1,1) NOT NULL,
+	[propuestaID] [int] NOT NULL,
+	[usuarioID] [int] NULL,
+	[organizacionID] [int] NULL,
+	[esPrincipal] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[proponenteID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_propuestaCategoria]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_propuestaCategoria](
-	[categoriaid] [int] NOT NULL,
+	[categoriaid] [int] IDENTITY(1,1) NOT NULL,
 	[nombre] [varchar](50) NOT NULL,
  CONSTRAINT [PK_pv_propuestaCategoria] PRIMARY KEY CLUSTERED 
 (
@@ -666,17 +1276,16 @@ CREATE TABLE [dbo].[pv_propuestaCategoria](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_propuestas]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_propuestas]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_propuestas](
-	[propuestaid] [int] NOT NULL,
+	[propuestaid] [int] IDENTITY(1,1) NOT NULL,
 	[categoriaid] [int] NOT NULL,
 	[descripcion] [varchar](200) NULL,
 	[imgURL] [varchar](300) NULL,
-	[version] [varchar](8) NOT NULL,
 	[publicada] [bit] NOT NULL,
 	[fechaInicio] [datetime] NOT NULL,
 	[userid] [int] NOT NULL,
@@ -684,13 +1293,15 @@ CREATE TABLE [dbo].[pv_propuestas](
 	[checksum] [varbinary](300) NOT NULL,
 	[comentarios] [bit] NOT NULL,
 	[eventoID] [int] NOT NULL,
+	[boletaID] [int] NULL,
+	[estadoID] [int] NOT NULL,
  CONSTRAINT [PK_pv_propuestas] PRIMARY KEY CLUSTERED 
 (
 	[propuestaid] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_provincias]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_provincias]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -705,7 +1316,117 @@ CREATE TABLE [dbo].[pv_provincias](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_respuestaParticipante]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_proyecto]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_proyecto](
+	[proyectoID] [int] IDENTITY(1,1) NOT NULL,
+	[propuestaID] [int] NOT NULL,
+	[estadoID] [int] NOT NULL,
+	[fechaInicio] [datetime] NOT NULL,
+	[fechaEstimadaFin] [datetime] NULL,
+	[fechaCreacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[proyectoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[propuestaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_pruebasVida]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_pruebasVida](
+	[pruebaID] [int] IDENTITY(1,1) NOT NULL,
+	[userID] [int] NOT NULL,
+	[metodoPruebaID] [int] NOT NULL,
+	[resultado] [bit] NOT NULL,
+	[fechaValidacion] [date] NOT NULL,
+	[horarioID] [int] NOT NULL,
+ CONSTRAINT [PK_pv_pruebasVida] PRIMARY KEY CLUSTERED 
+(
+	[pruebaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_relacionesIA]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_relacionesIA](
+	[relacionId] [int] IDENTITY(1,1) NOT NULL,
+	[entidadId] [int] NOT NULL,
+	[verbo] [varchar](50) NOT NULL,
+	[objeto] [varchar](255) NOT NULL,
+	[confianza] [decimal](5, 2) NOT NULL,
+ CONSTRAINT [PK_pv_relacionesIA] PRIMARY KEY CLUSTERED 
+(
+	[relacionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_reporteFinanciero]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_reporteFinanciero](
+	[reporteID] [int] IDENTITY(1,1) NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[tipoID] [int] NOT NULL,
+	[periodoInicio] [date] NOT NULL,
+	[periodoFin] [date] NOT NULL,
+	[urlReporte] [nvarchar](max) NOT NULL,
+	[fechaPresentacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[reporteID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_reporteIrregularidad]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_reporteIrregularidad](
+	[reporteID] [int] IDENTITY(1,1) NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[reportanteID] [int] NOT NULL,
+	[fechaReporte] [datetime] NOT NULL,
+	[descripcion] [nvarchar](max) NOT NULL,
+	[estado] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[reporteID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_requisitosPropuesta]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_requisitosPropuesta](
+	[requisitoID] [int] IDENTITY(1,1) NOT NULL,
+	[boletaID] [int] NULL,
+	[requisito] [varchar](50) NULL,
+	[motivo] [varchar](150) NULL,
+ CONSTRAINT [PK_pv_requisitosPropuesta] PRIMARY KEY CLUSTERED 
+(
+	[requisitoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_respuestaParticipante]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -715,16 +1436,16 @@ CREATE TABLE [dbo].[pv_respuestaParticipante](
 	[preguntaID] [int] NOT NULL,
 	[respuestaID] [int] NOT NULL,
 	[valorRespuesta] [varchar](50) NOT NULL,
-	[esMancomunada] [bit] NOT NULL,
 	[userid] [int] NOT NULL,
 	[checksum] [varbinary](500) NOT NULL,
+	[pesoRespuesta] [int] NOT NULL,
  CONSTRAINT [PK_pv_respuestaParticipante] PRIMARY KEY CLUSTERED 
 (
 	[respuestaParticipanteID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_respuestas]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_respuestas]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -739,13 +1460,13 @@ CREATE TABLE [dbo].[pv_respuestas](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_resultadosAnalisis]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_resultadosAnalisis]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_resultadosAnalisis](
-	[resultadoId] [int] NOT NULL,
+	[resultadoId] [int] IDENTITY(1,1) NOT NULL,
 	[analisisId] [int] NOT NULL,
 	[outputAnalisis] [varchar](5000) NOT NULL,
 	[puntajeConfianza] [decimal](5, 2) NOT NULL,
@@ -757,13 +1478,32 @@ CREATE TABLE [dbo].[pv_resultadosAnalisis](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_revisionHumana]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_resultadoVotacion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_resultadoVotacion](
+	[resultadoID] [int] IDENTITY(1,1) NOT NULL,
+	[votacionID] [int] NOT NULL,
+	[opcion] [nvarchar](100) NOT NULL,
+	[votosAFavor] [int] NOT NULL,
+	[votosEnContra] [int] NOT NULL,
+	[abstenciones] [int] NOT NULL,
+	[resultadoFinal] [nvarchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[resultadoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_revisionHumana]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_revisionHumana](
-	[revisionHumanaId] [int] NOT NULL,
+	[revisionHumanaId] [int] IDENTITY(1,1) NOT NULL,
 	[userId] [int] NOT NULL,
 	[fechaRevisionHumana] [datetime] NOT NULL,
 	[analisisId] [int] NULL,
@@ -775,7 +1515,7 @@ CREATE TABLE [dbo].[pv_revisionHumana](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_roles]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_roles]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -790,7 +1530,7 @@ CREATE TABLE [dbo].[pv_roles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_rolesUsuarios]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_rolesUsuarios]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -809,7 +1549,41 @@ CREATE TABLE [dbo].[pv_rolesUsuarios](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_segmento]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_sancion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_sancion](
+	[sancionID] [int] IDENTITY(1,1) NOT NULL,
+	[procesoID] [int] NOT NULL,
+	[tipo] [nvarchar](100) NOT NULL,
+	[descripcion] [nvarchar](max) NOT NULL,
+	[monto] [decimal](18, 2) NULL,
+	[fechaAplicacion] [datetime] NOT NULL,
+	[fechaVencimiento] [datetime] NULL,
+	[estado] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[sancionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_sectorProfesion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_sectorProfesion](
+	[sectorID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [varchar](50) NOT NULL,
+ CONSTRAINT [PK_pv_sectorProfesion] PRIMARY KEY CLUSTERED 
+(
+	[sectorID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_segmento]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -823,7 +1597,7 @@ CREATE TABLE [dbo].[pv_segmento](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_sesiones]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_sesiones]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -843,7 +1617,7 @@ CREATE TABLE [dbo].[pv_sesiones](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_severidadLogs]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_severidadLogs]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -857,13 +1631,13 @@ CREATE TABLE [dbo].[pv_severidadLogs](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_solicitudCambio]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_solicitudCambio]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_solicitudCambio](
-	[solicitudCambioid] [int] NOT NULL,
+	[solicitudCambioid] [int] IDENTITY(1,1) NOT NULL,
 	[propuestaid] [int] NOT NULL,
 	[cambioPlanteado] [varchar](200) NOT NULL,
 	[fechaSolicitud] [datetime] NOT NULL,
@@ -873,7 +1647,79 @@ CREATE TABLE [dbo].[pv_solicitudCambio](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_tipoDetalle]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_subTipoTransaccion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_subTipoTransaccion](
+	[subTipoTransaccionID] [int] IDENTITY(1,1) NOT NULL,
+	[tipoTransaccionID] [int] NOT NULL,
+	[nombre] [varchar](50) NOT NULL,
+	[descripcion] [nvarchar](100) NULL,
+	[fechaCreacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[subTipoTransaccionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tarifaGrupo]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tarifaGrupo](
+	[tarifaID] [int] IDENTITY(1,1) NOT NULL,
+	[grupoID] [int] NOT NULL,
+	[tipoTarifa] [nvarchar](50) NOT NULL,
+	[porcentaje] [decimal](5, 2) NULL,
+	[montoFijo] [decimal](18, 2) NULL,
+	[monedaID] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[tarifaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tasaCambio]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tasaCambio](
+	[tasaCambioID] [int] IDENTITY(1,1) NOT NULL,
+	[monedaID] [int] NOT NULL,
+	[fechaInicio] [datetime] NOT NULL,
+	[fechaFin] [datetime] NULL,
+	[tasa] [float] NOT NULL,
+	[activa] [bit] NOT NULL,
+	[fechaCreacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[tasaCambioID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tipoAval]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tipoAval](
+	[tipoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombreTipo] [nvarchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[tipoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[nombreTipo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tipoDetalle]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -887,7 +1733,61 @@ CREATE TABLE [dbo].[pv_tipoDetalle](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_tipoPregunta]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_tipoGrupoValidador]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tipoGrupoValidador](
+	[tipoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombreTipo] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[tipoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[nombreTipo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tipoIrregularidad]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tipoIrregularidad](
+	[tipoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombreTipo] [nvarchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[tipoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[nombreTipo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tipoOrganizacion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tipoOrganizacion](
+	[tipoOrganizacionID] [int] IDENTITY(1,1) NOT NULL,
+	[nombreTipo] [nvarchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[tipoOrganizacionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[nombreTipo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tipoPregunta]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -901,13 +1801,102 @@ CREATE TABLE [dbo].[pv_tipoPregunta](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_ubicaciones]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_tipoReporteFinanciero]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tipoReporteFinanciero](
+	[tipoID] [int] IDENTITY(1,1) NOT NULL,
+	[nombreTipo] [nvarchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[tipoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[nombreTipo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tiposPropuesta]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tiposPropuesta](
+	[tipoPropuestaID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [varchar](50) NOT NULL,
+ CONSTRAINT [PK_pv_tiposPropuesta] PRIMARY KEY CLUSTERED 
+(
+	[tipoPropuestaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tipoTransaccion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tipoTransaccion](
+	[tipoTransaccionID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [varchar](30) NOT NULL,
+	[descripcion] [nvarchar](100) NULL,
+	[fechaCreacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[tipoTransaccionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_tipoVotacion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_tipoVotacion](
+	[tipoVotacionID] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [nvarchar](100) NOT NULL,
+	[descripcion] [nvarchar](500) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[tipoVotacionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_transaccion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_transaccion](
+	[transaccionID] [bigint] IDENTITY(1,1) NOT NULL,
+	[usuarioID] [int] NOT NULL,
+	[proyectoID] [int] NULL,
+	[monto] [float] NOT NULL,
+	[montoConvertido] [float] NULL,
+	[descripcion] [nvarchar](200) NULL,
+	[fechaTransaccion] [datetime] NOT NULL,
+	[horaRegistro] [time](7) NOT NULL,
+	[referencia] [nvarchar](50) NULL,
+	[checksum] [varbinary](64) NULL,
+	[tipoTransaccionID] [int] NOT NULL,
+	[subTipoTransaccionID] [int] NULL,
+	[tasaCambioID] [int] NULL,
+	[fechaCreacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[transaccionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_ubicaciones]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_ubicaciones](
-	[ubicacionID] [int] NOT NULL,
+	[ubicacionID] [int] IDENTITY(1,1) NOT NULL,
 	[paisID] [tinyint] NOT NULL,
 	[proviniciaID] [int] NOT NULL,
 	[cantonID] [int] NOT NULL,
@@ -918,7 +1907,7 @@ CREATE TABLE [dbo].[pv_ubicaciones](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_usuarios]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_usuarios]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -939,7 +1928,7 @@ CREATE TABLE [dbo].[pv_usuarios](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_usuariosPermisos]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_usuariosPermisos]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -958,7 +1947,7 @@ CREATE TABLE [dbo].[pv_usuariosPermisos](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_validaciones]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_validaciones]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -977,13 +1966,13 @@ CREATE TABLE [dbo].[pv_validaciones](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_validacionesCategoria]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_validacionesCategoria]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_validacionesCategoria](
-	[validacionCatid] [int] NOT NULL,
+	[validacionCatid] [int] IDENTITY(1,1) NOT NULL,
 	[categoriaid] [int] NOT NULL,
  CONSTRAINT [PK_pv_validacionesCategoria] PRIMARY KEY CLUSTERED 
 (
@@ -991,7 +1980,7 @@ CREATE TABLE [dbo].[pv_validacionesCategoria](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_validacionesTipos]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_validacionesTipos]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1005,13 +1994,32 @@ CREATE TABLE [dbo].[pv_validacionesTipos](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_validacionPropuestas]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_validacionPropuesta]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_validacionPropuesta](
+	[validacionID] [int] IDENTITY(1,1) NOT NULL,
+	[versionID] [int] NOT NULL,
+	[grupoID] [int] NOT NULL,
+	[fechaValidacion] [datetime] NOT NULL,
+	[estado] [nvarchar](50) NOT NULL,
+	[comentarios] [nvarchar](max) NULL,
+	[fechaCreacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[validacionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_validacionPropuestas]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_validacionPropuestas](
-	[validacionPropuestaid] [int] NOT NULL,
+	[validacionPropuestaid] [int] IDENTITY(1,1) NOT NULL,
 	[validacionId] [int] NOT NULL,
 	[propuestaId] [int] NOT NULL,
  CONSTRAINT [PK_pv_validacionPropuestas] PRIMARY KEY CLUSTERED 
@@ -1020,7 +2028,7 @@ CREATE TABLE [dbo].[pv_validacionPropuestas](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_validacionUsuarios]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_validacionUsuarios]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1035,7 +2043,7 @@ CREATE TABLE [dbo].[pv_validacionUsuarios](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[pv_validadores]    Script Date: 31/5/2025 09:56:11 ******/
+/****** Object:  Table [dbo].[pv_validadores]    Script Date: 2/6/2025 15:50:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1054,6 +2062,207 @@ CREATE TABLE [dbo].[pv_validadores](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+/****** Object:  Table [dbo].[pv_versionPropuesta]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_versionPropuesta](
+	[versionID] [int] IDENTITY(1,1) NOT NULL,
+	[propuestaID] [int] NOT NULL,
+	[numeroVersion] [int] NOT NULL,
+	[descripcion] [nvarchar](max) NOT NULL,
+	[fechaCreacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[versionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[propuestaID] ASC,
+	[numeroVersion] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_visitaFiscalizacion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_visitaFiscalizacion](
+	[visitaID] [int] IDENTITY(1,1) NOT NULL,
+	[proyectoID] [int] NOT NULL,
+	[fiscalizadorID] [int] NOT NULL,
+	[fechaVisita] [datetime] NOT NULL,
+	[observaciones] [nvarchar](max) NULL,
+	[recomendaciones] [nvarchar](max) NULL,
+	[fechaInforme] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[visitaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_votacion]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_votacion](
+	[votacionID] [int] IDENTITY(1,1) NOT NULL,
+	[tipoVotacionID] [int] NOT NULL,
+	[proyectoID] [int] NULL,
+	[propuestaID] [int] NULL,
+	[reporteID] [int] NULL,
+	[titulo] [nvarchar](255) NOT NULL,
+	[descripcion] [nvarchar](max) NULL,
+	[fechaInicio] [datetime] NOT NULL,
+	[fechaFin] [datetime] NOT NULL,
+	[umbralAprobacion] [decimal](5, 2) NULL,
+	[estado] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[votacionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[pv_votanteGrupo]    Script Date: 2/6/2025 15:50:02 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[pv_votanteGrupo](
+	[votanteGrupoID] [int] IDENTITY(1,1) NOT NULL,
+	[grupoVotacionID] [int] NOT NULL,
+	[usuarioID] [int] NULL,
+	[organizacionID] [int] NULL,
+	[fechaIncorporacion] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[votanteGrupoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_pv_requisitosPropuesta]    Script Date: 2/6/2025 15:50:02 ******/
+CREATE NONCLUSTERED INDEX [IX_pv_requisitosPropuesta] ON [dbo].[pv_requisitosPropuesta]
+(
+	[requisitoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [idx_pv_subTipoTransaccion_tipo]    Script Date: 2/6/2025 15:50:02 ******/
+CREATE NONCLUSTERED INDEX [idx_pv_subTipoTransaccion_tipo] ON [dbo].[pv_subTipoTransaccion]
+(
+	[tipoTransaccionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [idx_pv_tasaCambio_fechas]    Script Date: 2/6/2025 15:50:02 ******/
+CREATE NONCLUSTERED INDEX [idx_pv_tasaCambio_fechas] ON [dbo].[pv_tasaCambio]
+(
+	[fechaInicio] ASC,
+	[fechaFin] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [idx_pv_tasaCambio_moneda]    Script Date: 2/6/2025 15:50:02 ******/
+CREATE NONCLUSTERED INDEX [idx_pv_tasaCambio_moneda] ON [dbo].[pv_tasaCambio]
+(
+	[monedaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [idx_pv_transaccion_fecha]    Script Date: 2/6/2025 15:50:02 ******/
+CREATE NONCLUSTERED INDEX [idx_pv_transaccion_fecha] ON [dbo].[pv_transaccion]
+(
+	[fechaTransaccion] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [idx_pv_transaccion_proyecto]    Script Date: 2/6/2025 15:50:02 ******/
+CREATE NONCLUSTERED INDEX [idx_pv_transaccion_proyecto] ON [dbo].[pv_transaccion]
+(
+	[proyectoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [idx_pv_transaccion_tipo]    Script Date: 2/6/2025 15:50:02 ******/
+CREATE NONCLUSTERED INDEX [idx_pv_transaccion_tipo] ON [dbo].[pv_transaccion]
+(
+	[tipoTransaccionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [idx_pv_transaccion_usuario]    Script Date: 2/6/2025 15:50:02 ******/
+CREATE NONCLUSTERED INDEX [idx_pv_transaccion_usuario] ON [dbo].[pv_transaccion]
+(
+	[usuarioID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[pv_criterioProyecto] ADD  DEFAULT ((1)) FOR [esRequisito]
+GO
+ALTER TABLE [dbo].[pv_desembolso] ADD  DEFAULT ((1)) FOR [estadoID]
+GO
+ALTER TABLE [dbo].[pv_documentoPropuesta] ADD  DEFAULT (getdate()) FOR [fechaSubida]
+GO
+ALTER TABLE [dbo].[pv_evidenciaDesembolso] ADD  DEFAULT (getdate()) FOR [fechaSubida]
+GO
+ALTER TABLE [dbo].[pv_evidenciaIrregularidad] ADD  DEFAULT (getdate()) FOR [fechaSubida]
+GO
+ALTER TABLE [dbo].[pv_fiscalizador] ADD  DEFAULT (getdate()) FOR [fechaRegistro]
+GO
+ALTER TABLE [dbo].[pv_fiscalizador] ADD  DEFAULT ((1)) FOR [activo]
+GO
+ALTER TABLE [dbo].[pv_grupoValidador] ADD  DEFAULT (getdate()) FOR [fechaCreacion]
+GO
+ALTER TABLE [dbo].[pv_grupoVotacion] ADD  DEFAULT ((0)) FOR [esSegmentado]
+GO
+ALTER TABLE [dbo].[pv_hook] ADD  DEFAULT ((0)) FOR [prioridad]
+GO
+ALTER TABLE [dbo].[pv_incumplimiento] ADD  DEFAULT (getdate()) FOR [fechaReporte]
+GO
+ALTER TABLE [dbo].[pv_inversion] ADD  DEFAULT (getdate()) FOR [fechaInversion]
+GO
+ALTER TABLE [dbo].[pv_moduloExtension] ADD  DEFAULT (getdate()) FOR [fechaInstalacion]
+GO
+ALTER TABLE [dbo].[pv_moduloExtension] ADD  DEFAULT ((1)) FOR [activo]
+GO
+ALTER TABLE [dbo].[pv_moduloHook] ADD  DEFAULT ((1)) FOR [activo]
+GO
+ALTER TABLE [dbo].[pv_moneda] ADD  DEFAULT ((0)) FOR [esPredeterminada]
+GO
+ALTER TABLE [dbo].[pv_proponente] ADD  DEFAULT ((1)) FOR [esPrincipal]
+GO
+ALTER TABLE [dbo].[pv_proyecto] ADD  DEFAULT (getdate()) FOR [fechaCreacion]
+GO
+ALTER TABLE [dbo].[pv_reporteFinanciero] ADD  DEFAULT (getdate()) FOR [fechaPresentacion]
+GO
+ALTER TABLE [dbo].[pv_reporteIrregularidad] ADD  DEFAULT (getdate()) FOR [fechaReporte]
+GO
+ALTER TABLE [dbo].[pv_subTipoTransaccion] ADD  DEFAULT (getdate()) FOR [fechaCreacion]
+GO
+ALTER TABLE [dbo].[pv_tasaCambio] ADD  DEFAULT ((1)) FOR [activa]
+GO
+ALTER TABLE [dbo].[pv_tasaCambio] ADD  DEFAULT (getdate()) FOR [fechaCreacion]
+GO
+ALTER TABLE [dbo].[pv_tipoTransaccion] ADD  DEFAULT (getdate()) FOR [fechaCreacion]
+GO
+ALTER TABLE [dbo].[pv_transaccion] ADD  DEFAULT (getdate()) FOR [fechaCreacion]
+GO
+ALTER TABLE [dbo].[pv_validacionPropuesta] ADD  DEFAULT (getdate()) FOR [fechaCreacion]
+GO
+ALTER TABLE [dbo].[pv_versionPropuesta] ADD  DEFAULT (getdate()) FOR [fechaCreacion]
+GO
+ALTER TABLE [dbo].[pv_visitaFiscalizacion] ADD  DEFAULT (getdate()) FOR [fechaInforme]
+GO
+ALTER TABLE [dbo].[pv_votanteGrupo] ADD  DEFAULT (getdate()) FOR [fechaIncorporacion]
+GO
+ALTER TABLE [dbo].[pv_avalGubernamental]  WITH CHECK ADD FOREIGN KEY([tipoID])
+REFERENCES [dbo].[pv_tipoAval] ([tipoID])
+GO
+ALTER TABLE [dbo].[pv_avalGubernamental]  WITH CHECK ADD  CONSTRAINT [FK_pv_avalGubernamental_pv_propuestas] FOREIGN KEY([propuestaID])
+REFERENCES [dbo].[pv_propuestas] ([propuestaid])
+GO
+ALTER TABLE [dbo].[pv_avalGubernamental] CHECK CONSTRAINT [FK_pv_avalGubernamental_pv_propuestas]
+GO
+ALTER TABLE [dbo].[pv_boletaRequisitosPropuestas]  WITH CHECK ADD  CONSTRAINT [FK_pv_boletaRequisitosPropuestas_pv_tiposPropuesta] FOREIGN KEY([tipoPropuestaID])
+REFERENCES [dbo].[pv_tiposPropuesta] ([tipoPropuestaID])
+GO
+ALTER TABLE [dbo].[pv_boletaRequisitosPropuestas] CHECK CONSTRAINT [FK_pv_boletaRequisitosPropuestas_pv_tiposPropuesta]
+GO
 ALTER TABLE [dbo].[pv_cantones]  WITH CHECK ADD  CONSTRAINT [FK_pv_cantones_pv_provincias] FOREIGN KEY([provinciaID])
 REFERENCES [dbo].[pv_provincias] ([provinciaid])
 GO
@@ -1064,6 +2273,9 @@ REFERENCES [dbo].[pv_propuestas] ([propuestaid])
 GO
 ALTER TABLE [dbo].[pv_comentariosPropuesta] CHECK CONSTRAINT [FK_pv_comentariosPropuesta_pv_propuestas]
 GO
+ALTER TABLE [dbo].[pv_condicionAval]  WITH CHECK ADD FOREIGN KEY([avalID])
+REFERENCES [dbo].[pv_avalGubernamental] ([avalID])
+GO
 ALTER TABLE [dbo].[pv_contact]  WITH CHECK ADD  CONSTRAINT [FK_pv_contact_pv_contactType] FOREIGN KEY([typeId])
 REFERENCES [dbo].[pv_contactType] ([typeId])
 GO
@@ -1073,6 +2285,38 @@ ALTER TABLE [dbo].[pv_contact]  WITH CHECK ADD  CONSTRAINT [FK_pv_contact_pv_usu
 REFERENCES [dbo].[pv_usuarios] ([userid])
 GO
 ALTER TABLE [dbo].[pv_contact] CHECK CONSTRAINT [FK_pv_contact_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_contextoIA]  WITH CHECK ADD  CONSTRAINT [FK_pv_contextoIA_pv_embeddingsIA] FOREIGN KEY([embeddingId])
+REFERENCES [dbo].[pv_embeddingsIA] ([embeddingId])
+GO
+ALTER TABLE [dbo].[pv_contextoIA] CHECK CONSTRAINT [FK_pv_contextoIA_pv_embeddingsIA]
+GO
+ALTER TABLE [dbo].[pv_contextoIA]  WITH CHECK ADD  CONSTRAINT [FK_pv_contextoIA_pv_entidadesIA] FOREIGN KEY([entidadId])
+REFERENCES [dbo].[pv_entidadesIA] ([entidadId])
+GO
+ALTER TABLE [dbo].[pv_contextoIA] CHECK CONSTRAINT [FK_pv_contextoIA_pv_entidadesIA]
+GO
+ALTER TABLE [dbo].[pv_contextoIA]  WITH CHECK ADD  CONSTRAINT [FK_pv_contextoIA_pv_relacionesIA] FOREIGN KEY([relacionId])
+REFERENCES [dbo].[pv_relacionesIA] ([relacionId])
+GO
+ALTER TABLE [dbo].[pv_contextoIA] CHECK CONSTRAINT [FK_pv_contextoIA_pv_relacionesIA]
+GO
+ALTER TABLE [dbo].[pv_criterioProyecto]  WITH CHECK ADD FOREIGN KEY([criterioID])
+REFERENCES [dbo].[pv_criterioTerritorial] ([criterioID])
+GO
+ALTER TABLE [dbo].[pv_criterioProyecto]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_desembolso]  WITH CHECK ADD FOREIGN KEY([estadoID])
+REFERENCES [dbo].[pv_estadoDesembolso] ([estadoID])
+GO
+ALTER TABLE [dbo].[pv_desembolso]  WITH CHECK ADD FOREIGN KEY([planID])
+REFERENCES [dbo].[pv_planDesembolso] ([planID])
+GO
+ALTER TABLE [dbo].[pv_desembolso]  WITH CHECK ADD  CONSTRAINT [FK_pv_desembolso_pv_usuarios] FOREIGN KEY([aprobadorID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_desembolso] CHECK CONSTRAINT [FK_pv_desembolso_pv_usuarios]
 GO
 ALTER TABLE [dbo].[pv_detalleSegmento]  WITH CHECK ADD  CONSTRAINT [FK_pv_detalleSegmento_pv_criterio] FOREIGN KEY([criterioID])
 REFERENCES [dbo].[pv_criterio] ([criterioID])
@@ -1119,6 +2363,9 @@ REFERENCES [dbo].[pv_cantones] ([cantonID])
 GO
 ALTER TABLE [dbo].[pv_distrito] CHECK CONSTRAINT [FK_pv_distrito_pv_cantones]
 GO
+ALTER TABLE [dbo].[pv_documentoPropuesta]  WITH CHECK ADD FOREIGN KEY([versionID])
+REFERENCES [dbo].[pv_versionPropuesta] ([versionID])
+GO
 ALTER TABLE [dbo].[pv_educacionUsuario]  WITH CHECK ADD  CONSTRAINT [FK_pv_educacionUsuario_pv_nivelEducacion] FOREIGN KEY([nivelID])
 REFERENCES [dbo].[pv_nivelEducacion] ([nivelID])
 GO
@@ -1149,6 +2396,17 @@ REFERENCES [dbo].[pv_segmento] ([segmentoID])
 GO
 ALTER TABLE [dbo].[pv_evento] CHECK CONSTRAINT [FK_pv_evento_pv_segmento]
 GO
+ALTER TABLE [dbo].[pv_evidenciaDesembolso]  WITH CHECK ADD FOREIGN KEY([desembolsoID])
+REFERENCES [dbo].[pv_desembolso] ([desembolsoID])
+GO
+ALTER TABLE [dbo].[pv_evidenciaDesembolso]  WITH CHECK ADD  CONSTRAINT [FK_pv_evidenciaDesembolso_pv_usuarios] FOREIGN KEY([subidoPorID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_evidenciaDesembolso] CHECK CONSTRAINT [FK_pv_evidenciaDesembolso_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_evidenciaIrregularidad]  WITH CHECK ADD FOREIGN KEY([reporteID])
+REFERENCES [dbo].[pv_reporteIrregularidad] ([reporteID])
+GO
 ALTER TABLE [dbo].[pv_faseComentario]  WITH CHECK ADD  CONSTRAINT [FK_pv_faseComentario_pv_comentariosPropuesta] FOREIGN KEY([comentarioid])
 REFERENCES [dbo].[pv_comentariosPropuesta] ([comentarioid])
 GO
@@ -1169,10 +2427,80 @@ REFERENCES [dbo].[pv_validacionesTipos] ([tipoValidacionId])
 GO
 ALTER TABLE [dbo].[pv_faseValidacion] CHECK CONSTRAINT [FK_pv_faseValidacion_pv_validacionesTipos]
 GO
-ALTER TABLE [dbo].[pv_iaAnalisis]  WITH CHECK ADD  CONSTRAINT [FK_pv_iaAnalisis_pv_infoIA] FOREIGN KEY([infoid])
+ALTER TABLE [dbo].[pv_fiscalizador]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_fiscalizador]  WITH CHECK ADD  CONSTRAINT [FK_pv_fiscalizador_pv_usuarios] FOREIGN KEY([usuarioID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_fiscalizador] CHECK CONSTRAINT [FK_pv_fiscalizador_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_fiscalizador]  WITH CHECK ADD  CONSTRAINT [FK_pv_fiscalizador_pv_usuarios1] FOREIGN KEY([usuarioID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_fiscalizador] CHECK CONSTRAINT [FK_pv_fiscalizador_pv_usuarios1]
+GO
+ALTER TABLE [dbo].[pv_grupoValidador]  WITH CHECK ADD FOREIGN KEY([tipoID])
+REFERENCES [dbo].[pv_tipoGrupoValidador] ([tipoID])
+GO
+ALTER TABLE [dbo].[pv_grupoValidador]  WITH CHECK ADD FOREIGN KEY([tipoID])
+REFERENCES [dbo].[pv_tipoGrupoValidador] ([tipoID])
+GO
+ALTER TABLE [dbo].[pv_iaAnalisis]  WITH CHECK ADD  CONSTRAINT [FK_pv_iaAnalisis_pv_contextoIA] FOREIGN KEY([contextoID])
+REFERENCES [dbo].[pv_contextoIA] ([contextoId])
+GO
+ALTER TABLE [dbo].[pv_iaAnalisis] CHECK CONSTRAINT [FK_pv_iaAnalisis_pv_contextoIA]
+GO
+ALTER TABLE [dbo].[pv_iaAnalisis]  WITH CHECK ADD  CONSTRAINT [FK_pv_iaAnalisis_pv_infoIA1] FOREIGN KEY([infoid])
 REFERENCES [dbo].[pv_infoIA] ([infoId])
 GO
-ALTER TABLE [dbo].[pv_iaAnalisis] CHECK CONSTRAINT [FK_pv_iaAnalisis_pv_infoIA]
+ALTER TABLE [dbo].[pv_iaAnalisis] CHECK CONSTRAINT [FK_pv_iaAnalisis_pv_infoIA1]
+GO
+ALTER TABLE [dbo].[pv_iaAnalisis]  WITH CHECK ADD  CONSTRAINT [FK_pv_iaAnalisis_pv_mediaFiles] FOREIGN KEY([mediaFileid])
+REFERENCES [dbo].[pv_mediaFiles] ([mediaFileId])
+GO
+ALTER TABLE [dbo].[pv_iaAnalisis] CHECK CONSTRAINT [FK_pv_iaAnalisis_pv_mediaFiles]
+GO
+ALTER TABLE [dbo].[pv_identidadDigital]  WITH CHECK ADD  CONSTRAINT [FK_pv_identidadDigital_pv_horarios] FOREIGN KEY([horarioID])
+REFERENCES [dbo].[pv_horarios] ([horarioId])
+GO
+ALTER TABLE [dbo].[pv_identidadDigital] CHECK CONSTRAINT [FK_pv_identidadDigital_pv_horarios]
+GO
+ALTER TABLE [dbo].[pv_identidadDigital]  WITH CHECK ADD  CONSTRAINT [FK_pv_identidadDigital_pv_usuarios] FOREIGN KEY([userID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_identidadDigital] CHECK CONSTRAINT [FK_pv_identidadDigital_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_incentivoProyecto]  WITH CHECK ADD FOREIGN KEY([incentivoID])
+REFERENCES [dbo].[pv_incentivoGubernamental] ([incentivoID])
+GO
+ALTER TABLE [dbo].[pv_incentivoProyecto]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_incentivoProyecto]  WITH CHECK ADD FOREIGN KEY([votacionID])
+REFERENCES [dbo].[pv_votacion] ([votacionID])
+GO
+ALTER TABLE [dbo].[pv_incumplimiento]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_incumplimiento]  WITH CHECK ADD FOREIGN KEY([reporteID])
+REFERENCES [dbo].[pv_reporteIrregularidad] ([reporteID])
+GO
+ALTER TABLE [dbo].[pv_incumplimiento]  WITH CHECK ADD  CONSTRAINT [FK_pv_incumplimiento_pv_usuarios] FOREIGN KEY([reportadoPorID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_incumplimiento] CHECK CONSTRAINT [FK_pv_incumplimiento_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_inversion]  WITH CHECK ADD FOREIGN KEY([monedaID])
+REFERENCES [dbo].[pv_moneda] ([monedaID])
+GO
+ALTER TABLE [dbo].[pv_inversion]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_inversion]  WITH CHECK ADD  CONSTRAINT [FK_pv_inversion_pv_usuarios] FOREIGN KEY([inversorID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_inversion] CHECK CONSTRAINT [FK_pv_inversion_pv_usuarios]
 GO
 ALTER TABLE [dbo].[pv_logs]  WITH CHECK ADD  CONSTRAINT [FK_pv_logs_pv_logOrigen] FOREIGN KEY([origenlogid])
 REFERENCES [dbo].[pv_logOrigen] ([origenlogid])
@@ -1194,6 +2522,27 @@ REFERENCES [dbo].[pv_mediaTypes] ([mediaTypeId])
 GO
 ALTER TABLE [dbo].[pv_mediaFiles] CHECK CONSTRAINT [FK_pv_mediaFiles_pv_mediaTypes]
 GO
+ALTER TABLE [dbo].[pv_MFA]  WITH CHECK ADD  CONSTRAINT [FK_pv_MFA_pv_horarios] FOREIGN KEY([horarioID])
+REFERENCES [dbo].[pv_horarios] ([horarioId])
+GO
+ALTER TABLE [dbo].[pv_MFA] CHECK CONSTRAINT [FK_pv_MFA_pv_horarios]
+GO
+ALTER TABLE [dbo].[pv_MFA]  WITH CHECK ADD  CONSTRAINT [FK_pv_MFA_pv_usuarios] FOREIGN KEY([userID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_MFA] CHECK CONSTRAINT [FK_pv_MFA_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_moduloHook]  WITH CHECK ADD FOREIGN KEY([hookID])
+REFERENCES [dbo].[pv_hook] ([hookID])
+GO
+ALTER TABLE [dbo].[pv_moduloHook]  WITH CHECK ADD FOREIGN KEY([moduloID])
+REFERENCES [dbo].[pv_moduloExtension] ([moduloID])
+GO
+ALTER TABLE [dbo].[pv_organizaciones]  WITH CHECK ADD  CONSTRAINT [FK_pv_organizaciones_pv_tipoOrganizacion] FOREIGN KEY([tipoOrganizacionID])
+REFERENCES [dbo].[pv_tipoOrganizacion] ([tipoOrganizacionID])
+GO
+ALTER TABLE [dbo].[pv_organizaciones] CHECK CONSTRAINT [FK_pv_organizaciones_pv_tipoOrganizacion]
+GO
 ALTER TABLE [dbo].[pv_orgUsuarios]  WITH CHECK ADD  CONSTRAINT [FK_pv_orgUsuarios_pv_organizaciones] FOREIGN KEY([organizacionid])
 REFERENCES [dbo].[pv_organizaciones] ([organizacionid])
 GO
@@ -1204,6 +2553,23 @@ REFERENCES [dbo].[pv_usuarios] ([userid])
 GO
 ALTER TABLE [dbo].[pv_orgUsuarios] CHECK CONSTRAINT [FK_pv_orgUsuarios_pv_usuarios]
 GO
+ALTER TABLE [dbo].[pv_pagoInversor]  WITH CHECK ADD FOREIGN KEY([monedaID])
+REFERENCES [dbo].[pv_moneda] ([monedaID])
+GO
+ALTER TABLE [dbo].[pv_pagoInversor]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_pagoInversor]  WITH CHECK ADD  CONSTRAINT [FK_pv_pagoInversor_pv_usuarios] FOREIGN KEY([inversorID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_pagoInversor] CHECK CONSTRAINT [FK_pv_pagoInversor_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_planDesembolso]  WITH CHECK ADD FOREIGN KEY([monedaID])
+REFERENCES [dbo].[pv_moneda] ([monedaID])
+GO
+ALTER TABLE [dbo].[pv_planDesembolso]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
 ALTER TABLE [dbo].[pv_preguntas]  WITH CHECK ADD  CONSTRAINT [FK_pv_preguntas_pv_encuesta] FOREIGN KEY([encuestaID])
 REFERENCES [dbo].[pv_encuesta] ([encuestaID])
 GO
@@ -1213,6 +2579,39 @@ ALTER TABLE [dbo].[pv_preguntas]  WITH CHECK ADD  CONSTRAINT [FK_pv_preguntas_pv
 REFERENCES [dbo].[pv_tipoPregunta] ([tipoPreguntaID])
 GO
 ALTER TABLE [dbo].[pv_preguntas] CHECK CONSTRAINT [FK_pv_preguntas_pv_tipoPregunta]
+GO
+ALTER TABLE [dbo].[pv_procesoLegal]  WITH CHECK ADD FOREIGN KEY([incumplimientoID])
+REFERENCES [dbo].[pv_incumplimiento] ([incumplimientoID])
+GO
+ALTER TABLE [dbo].[pv_profesiones]  WITH CHECK ADD  CONSTRAINT [FK_pv_profesiones_pv_sectorProfesion] FOREIGN KEY([sectorProfesionID])
+REFERENCES [dbo].[pv_sectorProfesion] ([sectorID])
+GO
+ALTER TABLE [dbo].[pv_profesiones] CHECK CONSTRAINT [FK_pv_profesiones_pv_sectorProfesion]
+GO
+ALTER TABLE [dbo].[pv_proponente]  WITH CHECK ADD  CONSTRAINT [FK_pv_proponente_pv_organizaciones] FOREIGN KEY([organizacionID])
+REFERENCES [dbo].[pv_organizaciones] ([organizacionid])
+GO
+ALTER TABLE [dbo].[pv_proponente] CHECK CONSTRAINT [FK_pv_proponente_pv_organizaciones]
+GO
+ALTER TABLE [dbo].[pv_proponente]  WITH CHECK ADD  CONSTRAINT [FK_pv_proponente_pv_propuestas] FOREIGN KEY([propuestaID])
+REFERENCES [dbo].[pv_propuestas] ([propuestaid])
+GO
+ALTER TABLE [dbo].[pv_proponente] CHECK CONSTRAINT [FK_pv_proponente_pv_propuestas]
+GO
+ALTER TABLE [dbo].[pv_proponente]  WITH CHECK ADD  CONSTRAINT [FK_pv_proponente_pv_usuarios] FOREIGN KEY([usuarioID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_proponente] CHECK CONSTRAINT [FK_pv_proponente_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_propuestas]  WITH CHECK ADD  CONSTRAINT [FK_pv_propuestas_pv_boletaRequisitosPropuestas] FOREIGN KEY([boletaID])
+REFERENCES [dbo].[pv_boletaRequisitosPropuestas] ([boletaID])
+GO
+ALTER TABLE [dbo].[pv_propuestas] CHECK CONSTRAINT [FK_pv_propuestas_pv_boletaRequisitosPropuestas]
+GO
+ALTER TABLE [dbo].[pv_propuestas]  WITH CHECK ADD  CONSTRAINT [FK_pv_propuestas_pv_estadoPropuesta] FOREIGN KEY([estadoID])
+REFERENCES [dbo].[pv_estadoPropuesta] ([estadoID])
+GO
+ALTER TABLE [dbo].[pv_propuestas] CHECK CONSTRAINT [FK_pv_propuestas_pv_estadoPropuesta]
 GO
 ALTER TABLE [dbo].[pv_propuestas]  WITH CHECK ADD  CONSTRAINT [FK_pv_propuestas_pv_evento] FOREIGN KEY([eventoID])
 REFERENCES [dbo].[pv_evento] ([eventoID])
@@ -1228,6 +2627,53 @@ ALTER TABLE [dbo].[pv_provincias]  WITH CHECK ADD  CONSTRAINT [FK_pv_provincias_
 REFERENCES [dbo].[pv_paises] ([paisid])
 GO
 ALTER TABLE [dbo].[pv_provincias] CHECK CONSTRAINT [FK_pv_provincias_pv_paises]
+GO
+ALTER TABLE [dbo].[pv_proyecto]  WITH CHECK ADD FOREIGN KEY([estadoID])
+REFERENCES [dbo].[pv_estadoProyecto] ([estadoID])
+GO
+ALTER TABLE [dbo].[pv_proyecto]  WITH CHECK ADD  CONSTRAINT [FK_pv_proyecto_pv_propuestas] FOREIGN KEY([propuestaID])
+REFERENCES [dbo].[pv_propuestas] ([propuestaid])
+GO
+ALTER TABLE [dbo].[pv_proyecto] CHECK CONSTRAINT [FK_pv_proyecto_pv_propuestas]
+GO
+ALTER TABLE [dbo].[pv_pruebasVida]  WITH CHECK ADD  CONSTRAINT [FK_pv_pruebasVida_pv_horarios] FOREIGN KEY([horarioID])
+REFERENCES [dbo].[pv_horarios] ([horarioId])
+GO
+ALTER TABLE [dbo].[pv_pruebasVida] CHECK CONSTRAINT [FK_pv_pruebasVida_pv_horarios]
+GO
+ALTER TABLE [dbo].[pv_pruebasVida]  WITH CHECK ADD  CONSTRAINT [FK_pv_pruebasVida_pv_usuarios] FOREIGN KEY([userID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_pruebasVida] CHECK CONSTRAINT [FK_pv_pruebasVida_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_relacionesIA]  WITH CHECK ADD  CONSTRAINT [FK_pv_relacionesIA_pv_entidadesIA] FOREIGN KEY([entidadId])
+REFERENCES [dbo].[pv_entidadesIA] ([entidadId])
+GO
+ALTER TABLE [dbo].[pv_relacionesIA] CHECK CONSTRAINT [FK_pv_relacionesIA_pv_entidadesIA]
+GO
+ALTER TABLE [dbo].[pv_reporteFinanciero]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_reporteFinanciero]  WITH CHECK ADD FOREIGN KEY([tipoID])
+REFERENCES [dbo].[pv_tipoReporteFinanciero] ([tipoID])
+GO
+ALTER TABLE [dbo].[pv_reporteIrregularidad]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_reporteIrregularidad]  WITH CHECK ADD  CONSTRAINT [FK_pv_reporteIrregularidad_pv_usuarios] FOREIGN KEY([reportanteID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_reporteIrregularidad] CHECK CONSTRAINT [FK_pv_reporteIrregularidad_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_requisitosPropuesta]  WITH CHECK ADD  CONSTRAINT [FK_pv_requisitosPropuesta_pv_boletaRequisitosPropuestas] FOREIGN KEY([boletaID])
+REFERENCES [dbo].[pv_boletaRequisitosPropuestas] ([boletaID])
+GO
+ALTER TABLE [dbo].[pv_requisitosPropuesta] CHECK CONSTRAINT [FK_pv_requisitosPropuesta_pv_boletaRequisitosPropuestas]
+GO
+ALTER TABLE [dbo].[pv_respuestaParticipante]  WITH CHECK ADD  CONSTRAINT [FK_pv_respuestaParticipante_pv_pesoRespuesta] FOREIGN KEY([pesoRespuesta])
+REFERENCES [dbo].[pv_pesoRespuesta] ([pesoID])
+GO
+ALTER TABLE [dbo].[pv_respuestaParticipante] CHECK CONSTRAINT [FK_pv_respuestaParticipante_pv_pesoRespuesta]
 GO
 ALTER TABLE [dbo].[pv_respuestaParticipante]  WITH CHECK ADD  CONSTRAINT [FK_pv_respuestaParticipante_pv_preguntas] FOREIGN KEY([preguntaID])
 REFERENCES [dbo].[pv_preguntas] ([preguntaID])
@@ -1249,6 +2695,19 @@ REFERENCES [dbo].[pv_preguntas] ([preguntaID])
 GO
 ALTER TABLE [dbo].[pv_respuestas] CHECK CONSTRAINT [FK_pv_respuestas_pv_preguntas]
 GO
+ALTER TABLE [dbo].[pv_resultadosAnalisis]  WITH CHECK ADD  CONSTRAINT [FK_pv_resultadosAnalisis_pv_iaAnalisis] FOREIGN KEY([analisisId])
+REFERENCES [dbo].[pv_iaAnalisis] ([analisisId])
+GO
+ALTER TABLE [dbo].[pv_resultadosAnalisis] CHECK CONSTRAINT [FK_pv_resultadosAnalisis_pv_iaAnalisis]
+GO
+ALTER TABLE [dbo].[pv_resultadoVotacion]  WITH CHECK ADD FOREIGN KEY([votacionID])
+REFERENCES [dbo].[pv_votacion] ([votacionID])
+GO
+ALTER TABLE [dbo].[pv_revisionHumana]  WITH CHECK ADD  CONSTRAINT [FK_pv_revisionHumana_pv_iaAnalisis] FOREIGN KEY([analisisId])
+REFERENCES [dbo].[pv_iaAnalisis] ([analisisId])
+GO
+ALTER TABLE [dbo].[pv_revisionHumana] CHECK CONSTRAINT [FK_pv_revisionHumana_pv_iaAnalisis]
+GO
 ALTER TABLE [dbo].[pv_revisionHumana]  WITH CHECK ADD  CONSTRAINT [FK_pv_revisionHumana_pv_usuarios] FOREIGN KEY([userId])
 REFERENCES [dbo].[pv_usuarios] ([userid])
 GO
@@ -1264,6 +2723,9 @@ REFERENCES [dbo].[pv_usuarios] ([userid])
 GO
 ALTER TABLE [dbo].[pv_rolesUsuarios] CHECK CONSTRAINT [FK_pv_rolesUsuarios_pv_usuarios]
 GO
+ALTER TABLE [dbo].[pv_sancion]  WITH CHECK ADD FOREIGN KEY([procesoID])
+REFERENCES [dbo].[pv_procesoLegal] ([procesoID])
+GO
 ALTER TABLE [dbo].[pv_sesiones]  WITH CHECK ADD  CONSTRAINT [FK_pv_sesiones_pv_plataformaAutenticacion] FOREIGN KEY([plataformaAutId])
 REFERENCES [dbo].[pv_plataformaAutenticacion] ([plataformaAutId])
 GO
@@ -1278,6 +2740,41 @@ ALTER TABLE [dbo].[pv_solicitudCambio]  WITH CHECK ADD  CONSTRAINT [FK_pv_solici
 REFERENCES [dbo].[pv_propuestas] ([propuestaid])
 GO
 ALTER TABLE [dbo].[pv_solicitudCambio] CHECK CONSTRAINT [FK_pv_solicitudCambio_pv_propuestas]
+GO
+ALTER TABLE [dbo].[pv_subTipoTransaccion]  WITH CHECK ADD FOREIGN KEY([tipoTransaccionID])
+REFERENCES [dbo].[pv_tipoTransaccion] ([tipoTransaccionID])
+GO
+ALTER TABLE [dbo].[pv_tarifaGrupo]  WITH CHECK ADD FOREIGN KEY([grupoID])
+REFERENCES [dbo].[pv_grupoValidador] ([grupoID])
+GO
+ALTER TABLE [dbo].[pv_tarifaGrupo]  WITH CHECK ADD FOREIGN KEY([grupoID])
+REFERENCES [dbo].[pv_grupoValidador] ([grupoID])
+GO
+ALTER TABLE [dbo].[pv_tarifaGrupo]  WITH CHECK ADD FOREIGN KEY([monedaID])
+REFERENCES [dbo].[pv_moneda] ([monedaID])
+GO
+ALTER TABLE [dbo].[pv_tarifaGrupo]  WITH CHECK ADD FOREIGN KEY([monedaID])
+REFERENCES [dbo].[pv_moneda] ([monedaID])
+GO
+ALTER TABLE [dbo].[pv_tasaCambio]  WITH CHECK ADD FOREIGN KEY([monedaID])
+REFERENCES [dbo].[pv_moneda] ([monedaID])
+GO
+ALTER TABLE [dbo].[pv_transaccion]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_transaccion]  WITH CHECK ADD FOREIGN KEY([subTipoTransaccionID])
+REFERENCES [dbo].[pv_subTipoTransaccion] ([subTipoTransaccionID])
+GO
+ALTER TABLE [dbo].[pv_transaccion]  WITH CHECK ADD FOREIGN KEY([tasaCambioID])
+REFERENCES [dbo].[pv_tasaCambio] ([tasaCambioID])
+GO
+ALTER TABLE [dbo].[pv_transaccion]  WITH CHECK ADD FOREIGN KEY([tipoTransaccionID])
+REFERENCES [dbo].[pv_tipoTransaccion] ([tipoTransaccionID])
+GO
+ALTER TABLE [dbo].[pv_transaccion]  WITH CHECK ADD  CONSTRAINT [FK_pv_transaccion_pv_usuarios] FOREIGN KEY([usuarioID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_transaccion] CHECK CONSTRAINT [FK_pv_transaccion_pv_usuarios]
 GO
 ALTER TABLE [dbo].[pv_ubicaciones]  WITH CHECK ADD  CONSTRAINT [FK_pv_ubicaciones_pv_cantones] FOREIGN KEY([cantonID])
 REFERENCES [dbo].[pv_cantones] ([cantonID])
@@ -1329,6 +2826,18 @@ REFERENCES [dbo].[pv_propuestaCategoria] ([categoriaid])
 GO
 ALTER TABLE [dbo].[pv_validacionesCategoria] CHECK CONSTRAINT [FK_pv_validacionesCategoria_pv_propuestaCategoria]
 GO
+ALTER TABLE [dbo].[pv_validacionPropuesta]  WITH CHECK ADD FOREIGN KEY([grupoID])
+REFERENCES [dbo].[pv_grupoValidador] ([grupoID])
+GO
+ALTER TABLE [dbo].[pv_validacionPropuesta]  WITH CHECK ADD FOREIGN KEY([grupoID])
+REFERENCES [dbo].[pv_grupoValidador] ([grupoID])
+GO
+ALTER TABLE [dbo].[pv_validacionPropuesta]  WITH CHECK ADD FOREIGN KEY([versionID])
+REFERENCES [dbo].[pv_versionPropuesta] ([versionID])
+GO
+ALTER TABLE [dbo].[pv_validacionPropuesta]  WITH CHECK ADD FOREIGN KEY([versionID])
+REFERENCES [dbo].[pv_versionPropuesta] ([versionID])
+GO
 ALTER TABLE [dbo].[pv_validacionPropuestas]  WITH CHECK ADD  CONSTRAINT [FK_pv_validacionPropuestas_pv_propuestas] FOREIGN KEY([propuestaId])
 REFERENCES [dbo].[pv_propuestas] ([propuestaid])
 GO
@@ -1358,6 +2867,52 @@ ALTER TABLE [dbo].[pv_validadores]  WITH CHECK ADD  CONSTRAINT [FK_pv_validadore
 REFERENCES [dbo].[pv_validaciones] ([validacionId])
 GO
 ALTER TABLE [dbo].[pv_validadores] CHECK CONSTRAINT [FK_pv_validadores_pv_validaciones]
+GO
+ALTER TABLE [dbo].[pv_versionPropuesta]  WITH CHECK ADD  CONSTRAINT [FK_pv_versionPropuesta_pv_propuestas] FOREIGN KEY([propuestaID])
+REFERENCES [dbo].[pv_propuestas] ([propuestaid])
+GO
+ALTER TABLE [dbo].[pv_versionPropuesta] CHECK CONSTRAINT [FK_pv_versionPropuesta_pv_propuestas]
+GO
+ALTER TABLE [dbo].[pv_visitaFiscalizacion]  WITH CHECK ADD FOREIGN KEY([fiscalizadorID])
+REFERENCES [dbo].[pv_fiscalizador] ([fiscalizadorID])
+GO
+ALTER TABLE [dbo].[pv_visitaFiscalizacion]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_votacion]  WITH CHECK ADD FOREIGN KEY([proyectoID])
+REFERENCES [dbo].[pv_proyecto] ([proyectoID])
+GO
+ALTER TABLE [dbo].[pv_votacion]  WITH CHECK ADD FOREIGN KEY([reporteID])
+REFERENCES [dbo].[pv_reporteIrregularidad] ([reporteID])
+GO
+ALTER TABLE [dbo].[pv_votacion]  WITH CHECK ADD FOREIGN KEY([tipoVotacionID])
+REFERENCES [dbo].[pv_tipoVotacion] ([tipoVotacionID])
+GO
+ALTER TABLE [dbo].[pv_votacion]  WITH CHECK ADD  CONSTRAINT [FK_pv_votacion_pv_propuestas] FOREIGN KEY([propuestaID])
+REFERENCES [dbo].[pv_propuestas] ([propuestaid])
+GO
+ALTER TABLE [dbo].[pv_votacion] CHECK CONSTRAINT [FK_pv_votacion_pv_propuestas]
+GO
+ALTER TABLE [dbo].[pv_votanteGrupo]  WITH CHECK ADD FOREIGN KEY([grupoVotacionID])
+REFERENCES [dbo].[pv_grupoVotacion] ([grupoVotacionID])
+GO
+ALTER TABLE [dbo].[pv_votanteGrupo]  WITH CHECK ADD  CONSTRAINT [FK_pv_votanteGrupo_pv_organizaciones] FOREIGN KEY([organizacionID])
+REFERENCES [dbo].[pv_organizaciones] ([organizacionid])
+GO
+ALTER TABLE [dbo].[pv_votanteGrupo] CHECK CONSTRAINT [FK_pv_votanteGrupo_pv_organizaciones]
+GO
+ALTER TABLE [dbo].[pv_votanteGrupo]  WITH CHECK ADD  CONSTRAINT [FK_pv_votanteGrupo_pv_usuarios] FOREIGN KEY([usuarioID])
+REFERENCES [dbo].[pv_usuarios] ([userid])
+GO
+ALTER TABLE [dbo].[pv_votanteGrupo] CHECK CONSTRAINT [FK_pv_votanteGrupo_pv_usuarios]
+GO
+ALTER TABLE [dbo].[pv_proponente]  WITH CHECK ADD CHECK  (([usuarioID] IS NOT NULL OR [organizacionID] IS NOT NULL))
+GO
+ALTER TABLE [dbo].[pv_proponente]  WITH CHECK ADD CHECK  (([usuarioID] IS NOT NULL OR [organizacionID] IS NOT NULL))
+GO
+ALTER TABLE [dbo].[pv_votanteGrupo]  WITH CHECK ADD  CONSTRAINT [CHK_Votante] CHECK  (([usuarioID] IS NOT NULL OR [organizacionID] IS NOT NULL))
+GO
+ALTER TABLE [dbo].[pv_votanteGrupo] CHECK CONSTRAINT [CHK_Votante]
 GO
 USE [master]
 GO

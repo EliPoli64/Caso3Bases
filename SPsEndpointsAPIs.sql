@@ -93,7 +93,7 @@ CREATE OR ALTER PROCEDURE dbo.sp_RevisarPropuesta
     @PropuestaId INT,
     @RevisorId   INT,
     @EsAprobada  BIT,
-    @Comentario  NVARCHAR(MAX) = NULL
+    @Comentario  VARCHAR(MAX) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;

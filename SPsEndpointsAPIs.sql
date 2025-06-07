@@ -68,17 +68,6 @@ BEGIN
                 CONCAT('PropuestaId=',@PropuestaId), 1, 1, 1);
 
         COMMIT;
-        INSERT INTO pv_eventoSistema (tipoEvento, entidad, entidadId, payload)
-        VALUES (
-          'PropuestaCreada',
-          'Propuesta',
-          @PropuestaId,
-          JSON_QUERY(
-          CONCAT(
-            '{"descripcion":"', @Descripcion, '", "categoriaId":', @CategoriaId, ', "userId":', @UserId, '}'
-          )
-          )
-        );
         SELECT 0 AS Codigo, 'Propuesta procesada', @PropuestaId AS PropuestaId;
     END TRY
     BEGIN CATCH
@@ -120,15 +109,6 @@ BEGIN
              2, 1, 1);
 
         COMMIT;
-        INSERT INTO pv_eventoSistema (tipoEvento, entidad, entidadId, payload)
-        VALUES (
-          'PropuestaRevisada',
-          'Propuesta',
-          @PropuestaId,
-          JSON_QUERY(
-          CONCAT('{"aprobada":', @EsAprobada, ', "comentario":"', ISNULL(@Comentario, ''), '"}')
-          )
-        );
         SELECT 0 AS Codigo, 'Propuesta revisada';
     END TRY
     BEGIN CATCH
@@ -186,15 +166,6 @@ BEGIN
         END
 
         COMMIT;
-        INSERT INTO pv_eventoSistema (tipoEvento, entidad, entidadId, payload)
-        VALUES (
-          'InversionRegistrada',
-          'Proyecto',
-          @ProyectoId,
-          JSON_QUERY(
-          CONCAT('{"usuarioId":', @InversorId, ', "monto":', @Monto, '}')
-          )
-        );
         SELECT 0 AS Codigo, 'Inversion registrada', @Equity AS EquityAsignado;
     END TRY
     BEGIN CATCH
@@ -255,17 +226,7 @@ BEGIN
             FETCH NEXT FROM c INTO @InversionId, @InversorId, @MontoInversion;
         END
         CLOSE c; DEALLOCATE c;
-
         COMMIT;
-        INSERT INTO pv_eventoSistema (tipoEvento, entidad, entidadId, payload)
-        VALUES (
-          'DividendosDistribuidos',
-          'Proyecto',
-          @ProyectoId,
-          JSON_QUERY(
-          CONCAT('{"montoTotal":', @MontoGanancia, ', "monedaId":', @MonedaId, '}')
-          )
-        );
         SELECT 0 AS Codigo, 'Dividendos generados';
     END TRY
     BEGIN CATCH

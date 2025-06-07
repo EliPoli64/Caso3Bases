@@ -55,13 +55,13 @@ ALTER TABLE pv_documentoVisual
 
 CREATE TABLE pv_eventoSistema (
     eventoId         INT IDENTITY PRIMARY KEY,
-    fechaEvento      DATETIME2 DEFAULT SYSDATETIME(),
+    fechaEvento      DATETIME DEFAULT SYSDATETIME(),
     tipoEvento       VARCHAR(100) NOT NULL,
     entidad          VARCHAR(100) NOT NULL,
     entidadId        INT NOT NULL,
     payload          VARCHAR(MAX),
     procesado        BIT NOT NULL DEFAULT 0,
-    fechaProcesado   DATETIME2 NULL
+    fechaProcesado   DATETIME NULL
 );
 
 -- indices
@@ -80,7 +80,7 @@ CREATE TABLE pv_workflowHistorial (
     fechaInicio      DATETIME DEFAULT SYSDATETIME(),
     estado           VARCHAR(50) NOT NULL DEFAULT 'pendiente',
     resultado        VARCHAR(MAX) NULL,
-    fechaFin         DATETIME2 NULL
+    fechaFin         DATETIME NULL
 );
 
 CREATE INDEX IX_Workflow_Entidad ON pv_workflowHistorial (entidad, entidadId);

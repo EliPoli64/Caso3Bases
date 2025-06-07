@@ -1,0 +1,22 @@
+INSERT INTO dbo.pv_profesiones (profesionID, nombre) VALUES
+(1, 'Ingeniero de Software'),
+(2, 'Analista de Datos'),
+(3, 'Diseñador Grafico'),
+(4, 'Consultor Financiero'),
+(5, 'Educador'),
+(6, 'Medico'),
+(7, 'Abogado'),
+(8, 'Arquitecto'),
+(9, 'Contador'),
+(10, 'Periodista'),
+(11, 'Investigador'),
+(12, 'Chef'),
+(13, 'Artista'),
+(14, 'Gestor de Proyectos'),
+(15, 'Enfermero'),
+(16, 'Marketing Digital'),
+(17, 'Recursos Humanos'),
+(18, 'Cientifico'),
+(19, 'Tecnico de Soporte'),
+(20, 'Agronomo');
+GO

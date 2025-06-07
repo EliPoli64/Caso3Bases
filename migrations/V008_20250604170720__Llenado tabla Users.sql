@@ -1,4 +1,3 @@
-
 -- Esto es para borrar datos y reiniciar el Identity -------------------------------------
 -- Borrar todos los registros
 DELETE FROM [dbo].[pv_usuarios];
@@ -8,7 +7,6 @@ DBCC CHECKIDENT ('[dbo].[pv_usuarios]', RESEED, 0);
 
 -- Llenado de Usuarios
 -- BORRAR ESTA PARTE CUANDO ESTE LLENOS PROFESIONES Y LLAVES -----------------------------
-ALTER TABLE [dbo].[pv_usuarios] NOCHECK CONSTRAINT [FK_pv_usuarios_pv_profesiones];
 ALTER TABLE [dbo].[pv_usuarios] NOCHECK CONSTRAINT [FK_pv_usuarios_pv_llavesUsuarios];
 ------------------------------------------------------------------------------------------
 -- Nombres:
@@ -52,20 +50,20 @@ BEGIN
     WHERE id = @cont;
     DECLARE @FechaNacimiento DATE = DATEADD(DAY, RAND() * DATEDIFF(DAY, @FechaInicio, @FechaFin), @FechaInicio);
     -- Cédulas:
-    DECLARE @Cedula VARCHAR(9) = RIGHT('000000000' + CAST(100000000 + ((@cont-1)*100) AS VARCHAR(10)), 9); -- El right es para asegurar los 9 digitos
+    DECLARE @Cedula VARCHAR(9) = RIGHT('000000000' + CAST(100000000 + ((@cont-1)*100) AS VARCHAR(10)), 9); -- El right es para asegurar los 9 digitos, son
+                                                                                                           -- cedulas secuenciales para evitar repetidas
     DECLARE @Checksum VARBINARY(256);
     SET @Checksum = HASHBYTES('SHA2_256', CONCAT(@nom, @ap1, @ap2, @Cedula));
-    INSERT INTO [dbo].[pv_usuarios] VALUES (
+    INSERT INTO [dbo].[pv_usuarios] (nombre, primerApellido, segundoApellido, fechaNacimiento, identificacion, nacional, checksum) VALUES (
         @nom,@ap1,@ap2,
         @FechaNacimiento,
         @Cedula,1,
-        @Checksum,1
+        @Checksum
     );
     SET @cont= @cont+ 1;
 END
 
 
 -- BORRAR ESTA PARTE CUANDO ESTE LLENOS PROFESIONES Y LLAVES -----------------------------
-ALTER TABLE [dbo].[pv_usuarios] CHECK CONSTRAINT [FK_pv_usuarios_pv_profesiones];
 ALTER TABLE [dbo].[pv_usuarios] CHECK CONSTRAINT [FK_pv_usuarios_pv_llavesUsuarios];
 ------------------------------------------------------------------------------------------

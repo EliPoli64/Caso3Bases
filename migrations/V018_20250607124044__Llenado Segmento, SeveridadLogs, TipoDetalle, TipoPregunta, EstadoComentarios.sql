@@ -15,10 +15,19 @@ INSERT INTO dbo.pv_severidadLogs (nombre) VALUES
 ('Critico'),
 ('Grave');
 INSERT INTO dbo.pv_tipoDetalle (Nombre) VALUES
-('Rango Numérico'),
-('Valor Exacto'),
-('Lista de Valores'),
-('Fecha');
+('Profesión'),
+('Edad'),
+('Provincia'),
+('Ubicación'),
+('Nivel de Educación'),
+('Estado Civil'),
+('Ingresos Mensuales'),
+('Nivel de Satisfacción'),
+('Frecuencia de Uso'),
+('Motivo de Contacto'),
+('Tipo de Servicio');
+('Afiliación'),
+('Género');
 INSERT INTO dbo.pv_tipoPregunta (tipo) VALUES
 ('Opción Múltiple'),
 ('Respuesta Abierta'),

@@ -10,7 +10,7 @@ INSERT INTO pv_statusRegistro(nombre) VALUES
 ('Registrado'),
 ('Rechazado'),
 ('En Proceso')
-
+-- statusRegistroUsuarios
 DECLARE @cont INT = 1
 DECLARE @contMax INT = (SELECT COUNT(1) FROM pv_usuarios)
 WHILE @cont <= @contMax
@@ -28,3 +28,23 @@ BEGIN
     WHERE usuarioID = 1 + FLOOR(RAND() * @contMax) -- número random entre 1 y 1000 (@contMax)
     SET @cont = @cont + 1
 END
+GO
+-- statusRegistroUsuariosOrgs
+DECLARE @cont INT = 1
+DECLARE @contMax INT = (SELECT COUNT(1) FROM pv_organizaciones)
+WHILE @cont <= @contMax
+BEGIN
+	INSERT INTO pv_statusRegistroOrgs(organizacionID, statusRegistroID, ultimaModificacion) VALUES
+	(@cont, 2, DATEADD(DAY, RAND() * DATEDIFF(DAY, '2020/01/01 00:00:00', GETDATE()), '2020/01/01 00:00:00'))
+	SET @cont = @cont+1
+END
+SET @cont = 1
+WHILE @cont <= 100 -- Cambiamos algunos registros para que no todos estén registrados
+BEGIN 
+    UPDATE pv_statusRegistroUsuarios
+    SET statusRegistroID = 1 + FLOOR(RAND() * 4), -- número random entre 1 y 4
+        ultimaModificacion = GETDATE() 
+    WHERE usuarioID = 1 + FLOOR(RAND() * @contMax) -- número random entre 1 y 1000 (@contMax)
+    SET @cont = @cont + 1
+END
+GO

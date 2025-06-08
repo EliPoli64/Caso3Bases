@@ -17,3 +17,6 @@ INSERT INTO pv_sectorProfesion (nombre) VALUES
 ('Relaciones Públicas'),('Comercio Electrónico'),
 ('Blockchain'),('Nanotecnología'),
 ('Robótica');
+
+INSERT INTO pv_severidadIncumplimiento VALUES
+('Leve'),('Moderado'),('Grave')

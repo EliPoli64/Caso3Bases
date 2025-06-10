@@ -214,16 +214,6 @@ DROP TABLE #UserIDs;
 
 PRINT 'Data generation complete.';
 
-SELECT
-    u.userid,
-    COUNT(DISTINCT du.documentoID) AS UniqueApprovedDocumentsCount
-FROM dbo.pv_usuarios u
-JOIN dbo.pv_documentosUsuario du ON u.userid = du.usuarioID
-JOIN dbo.pv_documento d ON du.documentoID = d.documentoID
-WHERE d.estadoDocumentoID = 1 AND u.userid BETWEEN 1 AND @numUsers
-GROUP BY u.userid
-HAVING COUNT(DISTINCT du.documentoID) = 1 -- Each user should have exactly ONE unique approved document
-ORDER BY u.userid;
 
 
 

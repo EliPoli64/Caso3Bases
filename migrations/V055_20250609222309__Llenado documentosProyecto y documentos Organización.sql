@@ -11,3 +11,9 @@ SELECT
 	   (SELECT TOP 1 documentoID FROM dbo.pv_documento ORDER BY NEWID()) AS documentoID,
 	   1 as esActivo	
 FROM pv_organizaciones o 
+INSERT INTO pv_documentosPropuestas(propuestaID, documentoID, esActivo)
+SELECT 
+	   p.propuestaid, 
+	   (SELECT TOP 1 documentoID FROM dbo.pv_documento ORDER BY NEWID()) AS documentoID,
+	   1 as esActivo	
+FROM pv_propuestas p 

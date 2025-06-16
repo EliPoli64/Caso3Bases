@@ -3700,3 +3700,43 @@ END;
 
 -- Limpiar tabla temporal
 DROP TABLE #NombresTareas;
+SET IDENTITY_INSERT [dbo].[pv_llavesUsuarios] OFF;
+DECLARE @usuarioID INT = 1;
+DECLARE @maxUsuarioID INT = (SELECT COUNT(*) FROM pv_usuarios); -- Aqui se puede ajustar segun el max cantidad de users
+DECLARE @S1 VARCHAR(50);
+DECLARE @S2 VARCHAR(100);
+DECLARE @ncKEY VARBINARY(256);
+
+WHILE @usuarioID <= @maxUsuarioID
+BEGIN
+    SET @S1 = (     -- S1 representa la contraseña y todas siguen el patrón 2 letras del Nombre, 2 de cada apellido y los últimos 4 de la cédula
+        SELECT TOP 1 
+            UPPER(LEFT(nombre, 2)) + 
+            UPPER(LEFT(primerApellido, 2)) + 
+            UPPER(LEFT(segundoApellido, 2)) + 
+            RIGHT(identificacion, 4) 
+        FROM pv_usuarios 
+        WHERE userid = @usuarioID
+    );
+   
+    SET @S2 = NEWID(); -- NEWID() nos genera un string único y aleatorio, lo podemos usar como llave
+    
+    -- Encriptar la llave
+    SET @ncKEY = ENCRYPTBYPASSPHRASE(@S2, @S1); -- Encriptamos según la contraseña
+    
+    -- Insertar el registro en la tabla
+    INSERT INTO [dbo].[pv_llavesUsuarios] (
+        [llaveCifrada],
+        [usuarioID],
+        [esActiva],
+        [ultimaModificacion]
+    ) VALUES (
+        @ncKEY,
+        @usuarioID,
+        1,  
+        GETDATE() 
+    );
+    
+    SET @usuarioID = @usuarioID + 1;
+END
+GO

@@ -3723,7 +3723,7 @@ BEGIN
     SET @S2 = NEWID(); -- NEWID() nos genera un string único y aleatorio, lo podemos usar como llave
     
     -- Encriptar la llave
-    SET @ncKEY = ENCRYPTBYPASSPHRASE(@S2, @S1); -- Encriptamos según la contraseña
+    SET @ncKEY = ENCRYPTBYPASSPHRASE(@S1, @S2); -- Encriptamos según la contraseña
     
     -- Insertar el registro en la tabla
     INSERT INTO [dbo].[pv_llavesUsuarios] (
@@ -3751,6 +3751,8 @@ DECLARE @fechaRespuesta DATETIME;
 DECLARE @ncRespuesta VARBINARY(256);
 DECLARE @tokenGUID UNIQUEIDENTIFIER;
 DECLARE @pesoRespuesta INT;
+DECLARE @contrasenia VARCHAR(50);
+DECLARE @llaveUsuario VARCHAR(100);
 
 
 CREATE TABLE #MapeoRespuestasPreguntas (
@@ -3855,9 +3857,25 @@ BEGIN
         WHERE mrp.PreguntaID = @current_pregunta
         ORDER BY NEWID();
 
-        SET @fechaRespuesta = DATEADD(day, -ABS(CHECKSUM(NEWID()) % 365), GETDATE()); -- Fecha aleatoria en el último año
-        SET @ncRespuesta = CONVERT(VARBINARY(256), HASHBYTES('MD5', CONVERT(VARCHAR(MAX), NEWID())));
-        SELECT TOP 1 @pesoRespuesta = p.pesoID 
+        SET @fechaRespuesta = GETDATE();
+        
+		DECLARE @aa VARBINARY(255) = 
+		(SELECT lo.llaveCifrada FROM pv_llavesUsuarios lo where usuarioID = @current_user);
+
+		SET @contrasenia = (SELECT TOP 1 
+            UPPER(LEFT(nombre, 2)) + 
+            UPPER(LEFT(primerApellido, 2)) + 
+            UPPER(LEFT(segundoApellido, 2)) + 
+            RIGHT(identificacion, 4) 
+        FROM pv_usuarios 
+        WHERE userid = @current_user
+		);
+
+		SET @llaveUsuario = DECRYPTBYPASSPHRASE(@contrasenia, @aa)
+
+		SET @ncRespuesta = ENCRYPTBYPASSPHRASE(@llaveUsuario, CAST(@current_user AS VARCHAR(5)) ) --ENCRIPTA LA LLAVE DEL USUARIO CON SU USER ID
+        
+		SELECT TOP 1 @pesoRespuesta = p.pesoID 
         FROM dbo.pv_pesoRespuesta p
         ORDER BY NEWID();
 

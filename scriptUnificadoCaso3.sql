@@ -1,4 +1,4 @@
-﻿USE VotoPV01
+USE VotoPV01
 GO
 
 EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
@@ -2640,6 +2640,37 @@ INSERT INTO dbo.pv_preguntas (
 ('¿Cuántos espacios para exposiciones son necesarios en su ciudad?', 5, 1, '2024-06-08 11:50:00', 0, 4, HASHBYTES('SHA2_256', 'P6Q4')),
 ('En una escala del 1 al 5, ¿cuán accesible es el arte y la cultura en su comunidad?', 3, 1, '2024-06-08 11:55:00', 0, 5, HASHBYTES('SHA2_256', 'P6Q5'));
 
+INSERT INTO dbo.pv_preguntas (
+    enunciado,
+    tipoPreguntaID,
+    maxSelecciones,
+    fechaPublicacion,
+    deleted,
+    [order],
+    checksum
+) VALUES
+('¿Cuál es la principal prioridad en la mejora del transporte público?', 1, 1, '2025-07-10', 0, 1, HASHBYTES('SHA2_256', 'P1Q1')),
+('¿Qué tan importante considera la creación de carriles exclusivos para bicicletas?', 3, 1,'2025-07-10', 0, 3, HASHBYTES('SHA2_256', 'P1Q2')),
+('¿El programa de becas debe incluir apoyo psicológico?', 4, 1, '2024-06-08 10:15:00', 0, 1, HASHBYTES('SHA2_256', 'P2Q1')),
+('En una escala del 1 al 5, ¿cuál es la urgencia de implementar este programa?', 3, 1, '2024-06-08 10:25:00', 0, 3, HASHBYTES('SHA2_256', 'P2Q2')),
+('¿Qué tipo de materiales educativos adicionales se necesitan?', 2, 1, '2024-06-08 10:30:00', 0, 4, HASHBYTES('SHA2_256', 'P2Q3')),
+('¿Cuál es el principal desafío de las clínicas móviles en zonas periurbanas?', 1, 1, '2024-06-08 10:35:00', 0, 1, HASHBYTES('SHA2_256', 'P3Q1')),
+('¿Considera que la vacunación periódica es suficiente para prevenir enfermedades?', 4, 1, '2024-06-08 10:40:00', 0, 2, HASHBYTES('SHA2_256', 'P3Q2')),
+('Describa cómo las clínicas móviles pueden mejorar el acceso a la salud.', 2, 1, '2024-06-08 10:45:00', 0, 3, HASHBYTES('SHA2_256', 'P3Q3')),
+('¿Cuántas clínicas móviles son necesarias para cubrir todas las zonas periurbanas?', 5, 1, '2024-06-08 10:50:00', 0, 4, HASHBYTES('SHA2_256', 'P3Q4')),
+('En una escala de 1 a 5, ¿cuán efectiva es la atención primaria brindada por las clínicas móviles?', 3, 5, '2024-06-08 10:55:00', 0, 5, HASHBYTES('SHA2_256', 'P3Q5')),
+('¿Cuáles son las especies nativas más adecuadas para la reforestación?', 1, 5, '2024-06-08 11:00:00', 0, 1, HASHBYTES('SHA2_256', 'P4Q1')),
+('¿Debería involucrarse a la comunidad en la campaña de reforestación?', 4, 1, '2024-06-08 11:05:00', 0, 2, HASHBYTES('SHA2_256', 'P4Q2')),
+('Describa el impacto a largo plazo de la reforestación en el ecosistema local.', 2, 1, '2024-06-08 11:10:00', 0, 3, HASHBYTES('SHA2_256', 'P4Q3')),
+('¿Qué tipo de habilidades digitales son más demandadas en el mercado actual?', 1, 3, '2024-06-08 11:15:00', 0, 1, HASHBYTES('SHA2_256', 'P5Q1')),
+('¿La creación de centros de innovación debe ser una prioridad nacional?', 4, 1, '2024-06-08 11:20:00', 0, 2, HASHBYTES('SHA2_256', 'P5Q2')),
+('En una escala del 1 al 5, ¿cuál es el potencial de crecimiento de startups en su provincia?', 3, 5, '2024-06-08 11:25:00', 0, 3, HASHBYTES('SHA2_256', 'P5Q3')),
+('Mencione tres áreas tecnológicas que considera cruciales para el desarrollo.', 2, 1, '2024-06-08 11:30:00', 0, 4, HASHBYTES('SHA2_256', 'P5Q4')),
+('¿Qué tipo de apoyo es más beneficioso para artistas emergentes?', 1, 1, '2024-06-08 11:35:00', 0, 1, HASHBYTES('SHA2_256', 'P6Q1')),
+('¿Deberían los fondos para producción ser reembolsables?', 4, 1, '2024-06-08 11:40:00', 0, 2, HASHBYTES('SHA2_256', 'P6Q2')),
+('Describa cómo un programa de apoyo puede impactar la escena artística local.', 2, 1, '2024-06-08 11:45:00', 0, 3, HASHBYTES('SHA2_256', 'P6Q3')),
+('¿Cuántos espacios para exposiciones son necesarios en su ciudad?', 5, 1, '2024-06-08 11:50:00', 0, 4, HASHBYTES('SHA2_256', 'P6Q4')),
+('En una escala del 1 al 5, ¿cuán accesible es el arte y la cultura en su comunidad?', 3, 1, '2024-06-08 11:55:00', 0, 5, HASHBYTES('SHA2_256', 'P6Q5'));
 
 INSERT INTO dbo.pv_respuestas (
     preguntaID,
@@ -3908,4 +3939,258 @@ BEGIN
     SET @current_user = @current_user + 1;
 END;
 DROP TABLE #MapeoRespuestasPreguntas;
+GO
+
+INSERT INTO dbo.pv_votacion (
+    tipoVotacionID,
+    titulo,
+    descripcion,
+    fechaInicio,
+    fechaFin,
+    estadoVotacionID,
+    ultimaModificacion,
+    privada,
+    esSecreta
+) VALUES
+(1, 'Votación: Mejora de Transporte Público', 'Vota a favor o en contra de la propuesta para la mejora de transporte público.',
+ '2025-06-15 09:00:00', '2025-07-15 17:00:00', 2, GETDATE(),0,0),
+
+(4,'Votación: Becas Rurales',
+ 'Distribuye el presupuesto disponible para la implementación de un programa de becas para estudiantes de bajos recursos en áreas rurales.',
+ '2024-06-12 10:00:00','2024-06-20 18:00:00',4, GETDATE(),1,1), 
+
+(6, 'Consulta Pública: Clínicas Móviles', 'Participa en la consulta sobre el establecimiento de clínicas móviles en zonas periurbanas.',
+'2024-05-01 08:00:00','2024-05-15 23:59:59',4, GETDATE(),0, 0),
+
+(3, 'Votación: Prioridad de Reforestación', 'Clasifica los mejores árboles con los cuales reforestar.',
+ '2024-07-10 11:00:00', '2024-07-30 16:00:00', 4, GETDATE(),0, 0), 
+
+(9, 'Votación: Centros de Innovación',
+ 'Busca prioridades respecto a que habilidades se deben fomentar','2025-05-15 13:00:00','2025-07-01 15:00:00',2, 
+ GETDATE(),0, 0), 
+
+(5, 'Campaña: Apoyo a Artistas Emergentes',
+ 'Votación vinculada a proyectos de financiamiento colectivo, para apoyar artistas nacionales emergentes.',
+ '2024-04-01 09:00:00', '2024-04-30 17:00:00', 5,  GETDATE(), 0, 0);
+
+ INSERT INTO pv_propuestaSegmentosDirigidos(propuestaID, segementoID, usuarioID, deleted, checksum)
+ SELECT 
+	p.propuestaid, 
+	(SELECT TOP 1 segmentoID FROM dbo.pv_segmento ORDER BY NEWID()) AS segmentoID,
+	(SELECT TOP 1 userid FROM dbo.pv_usuarios ORDER BY NEWID()) AS usuarioID,
+	0 AS deleted,
+	HASHBYTES('SHA2_256','Dir') AS [checksum]
+from pv_propuestas p
+
+ INSERT INTO pv_propuestaSegmentosImpacto(propuestaID, segmentoID, usuarioID, deleted, checksum)
+ SELECT 
+	p.propuestaid, 
+	(SELECT TOP 1 segmentoID FROM dbo.pv_segmento ORDER BY NEWID()) AS segmentoID,
+	(SELECT TOP 1 userid FROM dbo.pv_usuarios ORDER BY NEWID()) AS usuarioID,
+	0 AS deleted,
+	HASHBYTES('SHA2_256', 'Imp') as checksum
+from pv_propuestas p
+
+-- Declarar variables para rangos de IDs
+DECLARE @minVotacionID INT, @maxVotacionID INT;
+DECLARE @minObjetivoID INT, @maxObjetivoID INT;
+
+-- Obtener rangos de IDs existentes
+SELECT @minVotacionID = MIN(votacionID), @maxVotacionID = MAX(votacionID) 
+FROM pv_votacion;
+
+SELECT @minObjetivoID = MIN(objetivoEtapaID), @maxObjetivoID = MAX(objetivoEtapaID) 
+FROM pv_objetivosEtapa;
+
+-- Tabla temporal con posibles objetivos de votación en Costa Rica
+CREATE TABLE #ObjetivosVotacion (
+    Descripcion VARCHAR(500)
+);
+
+INSERT INTO #ObjetivosVotacion (Descripcion) VALUES
+('Aprobar propuesta de mejora de transporte público en el GAM'),
+('Validar presupuesto participativo para proyectos comunales'),
+('Seleccionar prioridades de inversión en infraestructura educativa'),
+('Definir áreas prioritarias para reforestación nacional'),
+('Aprobar creación de nuevos parques nacionales'),
+('Validar estrategia de reducción de emisiones de carbono'),
+('Seleccionar proyectos de innovación tecnológica a financiar'),
+('Aprobar plan de acción contra el cambio climático'),
+('Validar programa de becas para educación técnica'),
+('Seleccionar zonas para instalación de clínicas móviles'),
+('Aprobar plan de desarrollo urbano sostenible'),
+('Validar estrategia de seguridad ciudadana'),
+('Seleccionar prioridades para turismo sostenible'),
+('Aprobar programa de apoyo a emprendedores rurales'),
+('Validar plan de modernización del sistema de salud'),
+('Seleccionar proyectos culturales a financiar'),
+('Aprobar estrategia de reactivación económica post-pandemia'),
+('Validar plan de acción contra la pobreza'),
+('Seleccionar prioridades para infraestructura deportiva'),
+('Aprobar programa de capacitación digital para adultos mayores');
+
+-- Insertar datos aleatorios en pv_votacionesObjetivos
+DECLARE @i INT = 1;
+DECLARE @randomVotacionID INT;
+DECLARE @randomObjetivoID INT;
+DECLARE @descripcion VARCHAR(500);
+DECLARE @fechaModificacion DATETIME;
+DECLARE @deleted BIT;
+
+WHILE @i <= 50
+BEGIN
+    -- Seleccionar votación y objetivo existentes al azar
+    SET @randomVotacionID = FLOOR(RAND() * (@maxVotacionID - @minVotacionID + 1)) + @minVotacionID;
+    SET @randomObjetivoID = FLOOR(RAND() * (@maxObjetivoID - @minObjetivoID + 1)) + @minObjetivoID;
+    
+    -- Seleccionar descripción al azar
+    SELECT TOP 1 @descripcion = Descripcion FROM #ObjetivosVotacion ORDER BY RAND();
+    
+    -- Generar fecha aleatoria en los últimos 2 años
+    SET @fechaModificacion = DATEADD(day, -CAST(RAND() * 730 AS INT), GETDATE());
+    SET @fechaModificacion = DATEADD(hour, CAST(RAND() * 24 AS INT), @fechaModificacion);
+    SET @fechaModificacion = DATEADD(minute, CAST(RAND() * 60 AS INT), @fechaModificacion);
+    
+    -- 10% de probabilidad de que esté marcado como eliminado
+    SET @deleted = CASE WHEN RAND() > 0.9 THEN 1 ELSE 0 END;
+    
+    INSERT INTO pv_votacionesObjetivos (
+        objetivoProyectoID,
+        votacionID,
+        deleted,
+        fechaModificacion,
+        [checksum(256)]
+    )
+    VALUES (
+        @randomObjetivoID,
+        @randomVotacionID,
+        @deleted,
+        @fechaModificacion,
+        HASHBYTES('SHA2_256', @descripcion + CAST(@i AS VARCHAR(10)))
+    );
+    
+    SET @i = @i + 1;
+END;
+
+-- Insertar datos específicos para Costa Rica con relaciones válidas
+-- Primero obtenemos IDs existentes que sabemos que están relacionados
+DECLARE @votacionTransporteID INT, @votacionBecasID INT, @votacionClinicasID INT;
+DECLARE @objetivoFinanciamientoID INT, @objetivoAvalID INT, @objetivoTransparenciaID INT;
+
+SELECT @votacionTransporteID = votacionID FROM pv_votacion WHERE titulo LIKE '%Transporte Público%';
+SELECT @votacionBecasID = votacionID FROM pv_votacion WHERE titulo LIKE '%Becas Rurales%';
+SELECT @votacionClinicasID = votacionID FROM pv_votacion WHERE titulo LIKE '%Clínicas Móviles%';
+
+SELECT @objetivoFinanciamientoID = objetivoEtapaID FROM pv_objetivosEtapa WHERE descripcion LIKE '%financiamiento requerido%';
+SELECT @objetivoAvalID = objetivoEtapaID FROM pv_objetivosEtapa WHERE descripcion LIKE '%aval gubernamental%';
+SELECT @objetivoTransparenciaID = objetivoEtapaID FROM pv_objetivosEtapa WHERE descripcion LIKE '%transparencia en el 100%';
+
+-- Insertar relaciones específicas con sentido
+INSERT INTO pv_votacionesObjetivos (
+    
+    objetivoProyectoID,
+    votacionID,
+    deleted,
+    fechaModificacion,
+    [checksum(256)]
+)
+VALUES
+( @objetivoFinanciamientoID, @votacionBecasID, 0, GETDATE(), HASHBYTES('SHA2_256', 'Financiamiento becas rurales')),
+( @objetivoAvalID, @votacionTransporteID, 0, GETDATE(), HASHBYTES('SHA2_256', 'Aval transporte público')),
+( @objetivoTransparenciaID, @votacionClinicasID, 0, GETDATE(), HASHBYTES('SHA2_256', 'Transparencia clínicas móviles')),
+((SELECT TOP 1 objetivoEtapaID FROM pv_objetivosEtapa WHERE descripcion LIKE '%inversión ciudadana%' ORDER BY NEWID()), 
+    @votacionBecasID, 
+    0, 
+    GETDATE(), 
+    HASHBYTES('SHA2_256', 'Inversión becas rurales')),
+( 
+    (SELECT TOP 1 objetivoEtapaID FROM pv_objetivosEtapa WHERE descripcion LIKE '%reportes financieros%' ORDER BY NEWID()), 
+    @votacionTransporteID, 
+    0, 
+    GETDATE(), 
+    HASHBYTES('SHA2_256', 'Reportes transporte'));
+
+-- Limpiar tabla temporal
+DROP TABLE #ObjetivosVotacion;
+
+-- Verificar que todas las relaciones insertadas son válidas
+SELECT 
+    vo.votacionObjetivoID,
+    vo.objetivoProyectoID,
+    oe.descripcion AS objetivo,
+    vo.votacionID,
+    v.titulo AS votacion,
+    vo.deleted,
+    vo.fechaModificacion
+FROM 
+    pv_votacionesObjetivos vo
+    JOIN pv_objetivosEtapa oe ON vo.objetivoProyectoID = oe.objetivoEtapaID
+    JOIN pv_votacion v ON vo.votacionID = v.votacionID
+ORDER BY 
+    vo.votacionObjetivoID;
+	select * from pv_objetivosEtapa
+GO
+
+-- ocupa pv_votacion y pv_preguntas
+INSERT INTO pv_votacionPregunta (
+    votacionID,
+    preguntaID
+) VALUES
+-- Preguntas para la votación de Mejora de Transporte Público (votacionID = 1)
+( 1, 1),  -- ¿Está de acuerdo con la propuesta de mejora del transporte público?
+( 1, 2),  -- ¿Qué aspecto del transporte público considera más urgente mejorar?
+( 1, 3),  -- ¿Qué tan satisfecho está con el transporte público actual? (1-5)
+( 1, 4),  -- ¿Qué tan dispuesto estaría a pagar un 10% más por mejor servicio?
+
+-- Preguntas para la votación de Becas Rurales (votacionID = 2)
+( 2, 5),  -- ¿Qué porcentaje del presupuesto debería asignarse a primaria?
+( 2, 6),  -- ¿Qué porcentaje del presupuesto debería asignarse a secundaria?
+( 2, 7),  -- ¿Qué porcentaje del presupuesto debería asignarse a educación técnica?
+( 2, 8),  -- ¿Qué porcentaje del presupuesto debería asignarse a universidad?
+
+-- Preguntas para la Consulta Pública: Clínicas Móviles (votacionID = 3)
+( 3, 9),   -- ¿Con qué frecuencia deberían visitar las clínicas móviles su comunidad?
+( 3, 10), -- ¿Qué servicios de salud son más necesarios en su zona?
+( 3, 11), -- ¿Estaría dispuesto a contribuir con un pequeño porcentaje municipal para este programa?
+
+-- Preguntas para la Votación: Prioridad de Reforestación (votacionID = 4)
+( 4, 12), -- Clasifique las especies de árboles preferidas para reforestar (1-5)
+( 4, 13), -- ¿Qué beneficios ecológicos prioriza en la reforestación?
+( 4, 14), -- ¿Qué tan importante es incluir especies frutales en la reforestación?
+
+-- Preguntas para la Votación: Centros de Innovación (votacionID = 5)
+(5, 15), -- ¿Qué áreas de innovación deberían priorizarse en su provincia?
+( 5, 16), -- ¿Qué tan accesibles son los centros de innovación actuales? (1-5)
+(5, 17), -- ¿Qué tipo de programas de capacitación serían más útiles?
+
+-- Preguntas para la Campaña: Apoyo a Artistas Emergentes (votacionID = 6)
+(6, 18), -- ¿Qué tipo de apoyo es más beneficioso para artistas emergentes?
+( 6, 19), -- ¿Deberían los fondos para producción ser reembolsables?
+( 6, 20), -- Describa cómo un programa de apoyo puede impactar la escena artística local.
+( 6, 21), -- ¿Cuántos espacios para exposiciones son necesarios en su ciudad?
+( 6, 22), -- ¿Cuán accesible es el arte y la cultura en su comunidad? (1-5)
+
+-- Preguntas adicionales para votaciones futuras relacionadas con Costa Rica
+( 1, 23), -- ¿Cómo calificaría el estado de las carreteras en su provincia? (1-5)
+( 2, 24), -- ¿Qué porcentaje del presupuesto debería destinarse a transporte de estudiantes?
+( 3, 25), -- ¿Qué tan satisfecho está con los servicios de salud pública en su zona? (1-5)
+(4, 26), -- ¿Con qué frecuencia participa en actividades de reforestación?
+( 5, 27), -- ¿Qué tan importante es para usted que existan centros de innovación tecnológica?
+( 6, 28), -- ¿Con qué frecuencia asiste a eventos culturales en su comunidad?
+
+-- Preguntas específicas para proyectos de crowdfunding en Costa Rica
+( 2, 29), -- ¿Qué tan importante es para usted que los proyectos tengan impacto ambiental positivo?
+( 5, 30), -- ¿Qué sector tecnológico considera más prometedor para invertir en Costa Rica?
+( 6, 31), -- ¿Qué tipo de proyectos artísticos le interesaría apoyar financieramente?
+( 3, 32), -- ¿Estaría dispuesto a invertir en un proyecto de salud comunitaria?
+( 4, 33), -- ¿Qué tan importante es para usted que los proyectos de reforestación incluyan educación ambiental?
+( 1, 34), -- ¿Qué tan dispuesto estaría a usar transporte público si mejorara significativamente?
+
+-- Preguntas sobre participación ciudadana
+( 1, 35), -- ¿Con qué frecuencia participa en consultas públicas o votaciones?
+( 2, 36), -- ¿Qué tan informado se siente sobre los proyectos de desarrollo en su comunidad?
+( 3, 37), -- ¿Qué canales prefiere para recibir información sobre consultas públicas?
+( 4, 38), -- ¿Qué tan efectivas cree que son las consultas públicas para influir en decisiones?
+( 5, 39), -- ¿Qué tan accesibles son los mecanismos de participación ciudadana en su zona?
+( 6, 40); -- ¿Qué tan satisfecho está con los resultados de procesos participativos anteriores?
 GO

@@ -1,80 +1,200 @@
-
-CREATE OR ALTER PROCEDURE dbo.sp_CrearActualizarPropuesta
-    @PropuestaId      INT          = 0          OUTPUT,   -- 0 = nueva
-    @CategoriaId      INT,
-    @Descripcion      VARCHAR(200),
-    @ImgUrl           VARCHAR(300) = NULL,
-    @FechaFin         DATETIME     = NULL,
-    @UserId           INT,
-    @EventoId         INT,
-    @BoletaId         INT          = NULL,
-    @PermiteComentarios BIT        = 0
+CREATE PROCEDURE dbo.crearActualizarPropuesta
+(
+    @PropuestaID           INT             = NULL,      -- NULL = nueva
+    @CategoriaID           INT,
+    @Descripcion           VARCHAR(200)    = NULL,
+    @ImgURL                VARCHAR(300)    = NULL,
+    @FechaInicio           DATETIME        = NULL,
+    @FechaFin              DATETIME        = NULL,
+    @Comentarios           BIT,
+    @TipoPropuestaID       INT,
+    @OrganizacionID        INT             = NULL,
+    @SegmentosDirigidosJS  NVARCHAR(MAX)   = NULL,      -- ej: [1,2,3]
+    @SegmentosImpactoJS    NVARCHAR(MAX)   = NULL,      -- ej: [4,5]
+    @AdjuntosJS            NVARCHAR(MAX)   = NULL,      -- ej: [{url:'...',tipo:1},...]
+    @UsuarioAccion         INT,                           -- usuario que llama el SP
+    @EquipoOrigen          VARCHAR(50)     = NULL
+)
 AS
 BEGIN
     SET NOCOUNT ON;
-    DECLARE @tranStarted BIT = 0;
     BEGIN TRY
-        IF @@TRANCOUNT = 0
-        BEGIN TRAN; 
-        SET @tranStarted = 1;
+        DECLARE @Ahora DATETIME = SYSUTCDATETIME();
+        IF @FechaInicio IS NULL SET @FechaInicio = @Ahora;
 
-        IF NOT EXISTS (SELECT 1
-                       FROM pv_permissions p
-                       JOIN pv_orgUsuarios ou ON ou.userid = @UserId
-                       WHERE p.code = 'PROP_WRITE')
+        BEGIN TRAN;
+
+        -- valida permisos (solo para UPDATE)
+        IF @PropuestaID IS NOT NULL
         BEGIN
-            RAISERROR ('El usuario no tiene permisos para crear/editar propuestas', 16, 1);
+            IF NOT EXISTS ( SELECT 1
+                            FROM dbo.pv_proponente
+                            WHERE propuestaID = @PropuestaID
+                              AND usuarioID   = @UsuarioAccion
+                              AND esPrincipal = 1 )
+            BEGIN
+                RAISERROR('El usuario no tiene permiso para modificar esta propuesta.',16,1);
+                ROLLBACK; RETURN;
+            END
         END
 
-        DECLARE @EstadoPendiente INT;
-        SELECT @EstadoPendiente = estadoID 
-        FROM pv_estadoPropuesta 
-        WHERE nombreEstado = 'pendiente_de_validacion';
+        -- insert/update de pv_propuestas
+        DECLARE @EsNueva BIT = IIF(@PropuestaID IS NULL,1,0);
 
-        IF @PropuestaId = 0
-        BEGIN
-            INSERT INTO pv_propuestas
-            (categoriaid, descripcion, imgURL, publicada, fechaInicio, userid,
-             fechaFin, checksum, comentarios, eventoID, boletaID, estadoID)
-            VALUES
-            (@CategoriaId, @Descripcion, @ImgUrl, 0, SYSDATETIME(), @UserId,
-             @FechaFin, HASHBYTES('SHA2_256', @Descripcion), @PermiteComentarios,
-             @EventoId, @BoletaId, @EstadoPendiente);
+        IF @EsNueva = 1
+			BEGIN
+				SELECT HASHBYTES('SHA2_256', CONCAT_WS('|',@CategoriaID,@Descripcion,@ImgURL,@FechaInicio,@UsuarioAccion,@FechaFin,@Comentarios,@TipoPropuestaID,@OrganizacionID));
+				INSERT dbo.pv_propuestas
+				( categoriaid, descripcion, imgURL, fechaInicio,
+				  userid, fechaFin, checksum, comentarios,
+				  tipoPropuestaID, estadoID, organizacionID )
+				VALUES
+				( @CategoriaID, @Descripcion, @ImgURL, @FechaInicio,
+				  @UsuarioAccion, @FechaFin,
+				  HASHBYTES('SHA2_256', CONCAT_WS('|',@CategoriaID,@Descripcion,@ImgURL,@FechaInicio,@UsuarioAccion,@FechaFin,@Comentarios,@TipoPropuestaID,@OrganizacionID)),
+				  @Comentarios, @TipoPropuestaID,
+				  /* estado pendiente de validación */ (SELECT TOP(1) estadoID
+														FROM dbo.pv_estadoPropuesta
+														WHERE nombreEstado = N'En Revision' ),
+				  @OrganizacionID );
 
-            SET @PropuestaId = SCOPE_IDENTITY();
-
-            -- Proponente principal
-            INSERT INTO pv_proponente (propuestaID, usuarioID, esPrincipal)
-            VALUES (@PropuestaId, @UserId, 1);
-        END
+				SET @PropuestaID = SCOPE_IDENTITY();
+			END
         ELSE
         BEGIN
-            UPDATE pv_propuestas
-            SET categoriaid   = @CategoriaId,
-                descripcion   = @Descripcion,
-                imgURL        = @ImgUrl,
-                fechaFin      = @FechaFin,
-                comentarios   = @PermiteComentarios,
-                boletaID      = @BoletaId,
-                checksum      = HASHBYTES('SHA2_256', @Descripcion),
-                estadoID      = @EstadoPendiente
-            WHERE propuestaid = @PropuestaId
-              AND userid      = @UserId;           -- Control de autoria
+            UPDATE dbo.pv_propuestas
+              SET categoriaid     = @CategoriaID,
+                  descripcion     = @Descripcion,
+                  imgURL          = @ImgURL,
+                  fechaInicio     = @FechaInicio,
+                  fechaFin        = @FechaFin,
+                  comentarios     = @Comentarios,
+                  tipoPropuestaID = @TipoPropuestaID,
+                  organizacionID  = @OrganizacionID,
+                  checksum        = HASHBYTES('SHA2_256', CONCAT_WS('|',@CategoriaID,@Descripcion,@ImgURL,@FechaInicio,@UsuarioAccion,@FechaFin,@Comentarios,@TipoPropuestaID,@OrganizacionID))
+            WHERE propuestaid = @PropuestaID;
         END
 
-        INSERT INTO pv_logs
-        (descripcion, [timestamp], computador, usuario, trace, tipologid, origenlogid, logseveridadid)
-        VALUES ('Cambios en propuesta', SYSDATETIME(), HOST_NAME(), SYSTEM_USER,
-                CONCAT('PropuestaId=',@PropuestaId), 1, 1, 1);
+        -- ctrl versiones
+        DECLARE @NuevoNumVersion INT;
+
+        SELECT @NuevoNumVersion = ISNULL(MAX(numeroVersion),0)+1
+        FROM   dbo.pv_versionPropuesta
+        WHERE  propuestaID = @PropuestaID;
+
+        INSERT dbo.pv_versionPropuesta
+        (propuestaID, numeroVersion, descripcion, fechaCreacion)
+        VALUES
+        (@PropuestaID, @NuevoNumVersion, ISNULL(@Descripcion,'‑'), @Ahora);
+
+        DECLARE @VersionID INT = SCOPE_IDENTITY();
+
+        -- guardar segmentos meta
+        -- elimina asociaciones previas solo en UPDATE
+        IF @EsNueva = 0
+		BEGIN
+			UPDATE dbo.pv_propuestaSegmentosDirigidos
+			   SET deleted   = 1,
+				   checksum  = HASHBYTES('SHA2_256',
+										 CONCAT_WS('|', propuestaID, segementoID, usuarioID, 1))
+			 WHERE propuestaID = @PropuestaID
+			   AND deleted     = 0;   -- solo las filas activas
+		END
+
+        -- inserta nuevos (json -> tabla)
+        IF @SegmentosImpactoJS IS NOT NULL
+		BEGIN
+			;WITH jsonSeg (segID) AS (
+				SELECT value
+				  FROM OPENJSON(@SegmentosImpactoJS)
+			)
+			MERGE dbo.pv_propuestaSegmentosImpacto       AS tgt
+			USING jsonSeg                                AS src
+				  ON  tgt.propuestaID = @PropuestaID
+				  AND tgt.segmentoID = src.segID
+			WHEN MATCHED AND tgt.deleted = 1 THEN        -- ya existía pero estaba marcado como eliminado
+				UPDATE SET deleted   = 0,
+							usuarioID = @UsuarioAccion,
+							checksum  = HASHBYTES('SHA2_256',
+												  CONCAT_WS('|', @PropuestaID, src.segID, @UsuarioAccion, 0))
+			WHEN NOT MATCHED THEN
+				INSERT (propuestaID, segmentoID, usuarioID, deleted, checksum)
+				VALUES (@PropuestaID,
+						src.segID,
+						@UsuarioAccion,
+						0, -- activo
+						HASHBYTES('SHA2_256',
+								  CONCAT_WS('|', @PropuestaID, src.segID, @UsuarioAccion, 0)));
+		END
+
+        IF @SegmentosImpactoJS IS NOT NULL
+        BEGIN
+            INSERT dbo.pv_propuestaSegmentosImpacto (propuestaID, segmentoID)
+            SELECT @PropuestaID, value
+            FROM OPENJSON(@SegmentosImpactoJS);
+        END
+        -- adjuntos
+        IF @AdjuntosJS IS NOT NULL
+        BEGIN
+            DECLARE @Doc TABLE (documentoID INT);
+
+            -- crea registros en pv_documento
+            INSERT dbo.pv_documento (nombre, fechaCreacion, tipoDocumentoID, estadoDocumentoID,
+                                     ultimaModificacion, esActual, idLegal, checksum)
+            OUTPUT INSERTED.documentoID INTO @Doc(documentoID)
+            SELECT JSON_VALUE(value,'$.nombre'),
+                   @Ahora,
+                   JSON_VALUE(value,'$.tipoDocumentoID'),
+                   (SELECT TOP 1 estadoDocumentoID
+                    FROM dbo.pv_estadoDocumento
+                    WHERE nombre = N'En Revision'),
+                   @Ahora,
+                   1,
+                   JSON_VALUE(value,'$.idLegal'),
+                   HASHBYTES('SHA2_256', JSON_VALUE(value,'$.nombre'))
+            FROM OPENJSON(@AdjuntosJS);
+
+            -- asocia a la propuesta
+            INSERT dbo.pv_documentosPropuestas (propuestaID, documentoID, esActivo)
+            SELECT @PropuestaID, documentoID, 1
+            FROM @Doc;
+        END
+        -- crear registro de validacion interna
+        INSERT dbo.pv_validacionPropuesta
+        (versionID, grupoID, fechaValidacion, estado, comentarios, fechaCreacion)
+        VALUES
+        (@VersionID,
+         -- validadores genericos 
+         (SELECT TOP 1 grupoID FROM dbo.pv_grupoValidador WHERE tipoID = 1 ORDER BY grupoID),
+         @Ahora, N'En Revision', NULL, @Ahora);
+        -- crear logs
+        INSERT dbo.pv_logs
+        (descripcion, [timestamp], computador, usuario, trace,
+         refId1, refId2, checksum, tipologid, origenlogid, logseveridadid)
+        VALUES
+        ( IIF(@EsNueva=1,'Creación de propuesta','Actualización de propuesta'),
+          @Ahora, @EquipoOrigen, CAST(@UsuarioAccion AS VARCHAR(50)),
+          CONCAT('PropuestaID=',@PropuestaID,';Version=',@NuevoNumVersion),
+          @PropuestaID, @VersionID,
+          HASHBYTES('SHA2_256', CONCAT(@PropuestaID,@Ahora)),
+          (SELECT TOP 1 tipologid 
+			FROM dbo.pv_logTipos 
+			WHERE nombre = IIF(@EsNueva = 1, 'PropuestaCreada', 'PropuestaActualizada')),
+          (SELECT TOP 1 origenlogid FROM dbo.pv_logOrigen WHERE nombre='API'),
+          (SELECT TOP 1 logseveridadid FROM dbo.pv_severidadLogs WHERE nombre='Info') );
 
         COMMIT;
-        SELECT 0 AS Codigo, 'Propuesta procesada', @PropuestaId AS PropuestaId;
+
+        SELECT 'OK'   AS Resultado,
+               @PropuestaID     AS PropuestaID,
+               @NuevoNumVersion AS VersionCreada;
     END TRY
     BEGIN CATCH
-        IF @tranStarted = 1 ROLLBACK;
-        SELECT ERROR_NUMBER() AS Codigo, ERROR_MESSAGE() AS Mensaje;
+        IF XACT_STATE() <> 0 ROLLBACK;
+        DECLARE @Msg NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@Msg,16,1);
     END CATCH
-END;
+END
 GO
 
 

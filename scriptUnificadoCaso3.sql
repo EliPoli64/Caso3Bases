@@ -739,7 +739,9 @@ VALUES
 ('Publicada', 'Propuesta abierta a votaciones'),
 ('Cerrada', 'Propuesta sin votaciones activas'),
 ('Cancelada', 'Propuesta no aprobada'),
-('Rechazada', 'Propuesta cerrada por el público')
+('Rechazada', 'Propuesta cerrada por el publico'),
+('En Revision', 'Propuesta en proceso de evaluacion'),
+('Aprobada', 'Propuesta aceptada y lista para implementacion');
 
 DECLARE @i INT = 1;
 DECLARE @numRecords INT = 2500; 

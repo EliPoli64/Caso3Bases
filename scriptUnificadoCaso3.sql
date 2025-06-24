@@ -3,6 +3,8 @@ GO
 
 EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
 
+SET NOCOUNT ON;
+
 -- Borrar datos de todas las tablas y reiniciar identity
 DELETE FROM pv_accionesIA; DBCC CHECKIDENT ('pv_accionesIA', RESEED, 0);
 DELETE FROM pv_afiliaciones; DBCC CHECKIDENT ('pv_afiliaciones', RESEED, 0);
@@ -2597,14 +2599,14 @@ VALUES
 (6, 'Programa de apoyo a artistas emergentes, con fondos para la producción de obras y espacios para exposiciones y presentaciones públicas.', NULL, '2024-02-28 14:00:00', 364, NULL, HASHBYTES('SHA2_256', 'Propuesta Cultura 6'), 1, 7, 1, NULL);
 
 
-INSERT INTO pv_proyecto(propuestaID, estadoID, fechaInicio, fechaEstimadaFin, fechaCreacion, metodoTrabajoID, montoPedido, porcentaje)
+INSERT INTO pv_proyecto(propuestaID, estadoID, fechaInicio, fechaEstimadaFin, fechaCreacion, metodoTrabajoID, montoPedido, porcentaje, nombre)
 VALUES
-(1, 2, '2025-07-10', '2027-07-10', GETDATE(), 3, 100000, 10),
-(2, 2, '2025-08-04', NULL, GETDATE(), 8, 300000, 2),
-(3, 3, '2027-01-01', NULL, GETDATE(), 6, 400000, 7),
-(4, 2, '2026-08-01', '2028-08-01', GETDATE(),11, 900000, 1),
-(5, 2, '2025-07-01', '2025-12-31', GETDATE(), 12,700000, 3.5),
-(6, 2, '2026-01-01', NULL, GETDATE(), 6, 100000, 50);
+(1, 2, '2025-07-10', '2027-07-10', GETDATE(), 3, 100000, 10, 'Mejora Transporte Público'),
+(2, 2, '2025-08-04', NULL, GETDATE(), 8, 300000, 2, 'Programa Becas Estudiantiles'),
+(3, 3, '2027-01-01', NULL, GETDATE(), 6, 400000, 7, 'Establecimiento Clínicas Móviles'),
+(4, 2, '2026-08-01', '2028-08-01', GETDATE(),11, 900000, 1, 'Campaña Reforestación'),
+(5, 2, '2025-07-01', '2025-12-31', GETDATE(), 12,700000, 3.5, 'Creación Centros de Innovación'),
+(6, 2, '2026-01-01', NULL, GETDATE(), 6, 100000, 50, 'Apoyo hacia Artistas Emergentes');
 
 
 
@@ -4006,7 +4008,7 @@ FROM pv_objetivosEtapa;
 CREATE TABLE #ObjetivosVotacion (
     Descripcion VARCHAR(500)
 );
-
+-- pv_proyecto
 INSERT INTO #ObjetivosVotacion (Descripcion) VALUES
 ('Aprobar propuesta de mejora de transporte público en el GAM'),
 ('Validar presupuesto participativo para proyectos comunales'),

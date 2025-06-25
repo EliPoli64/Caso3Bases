@@ -256,6 +256,7 @@ DECLARE @FechaFin DATE = DATEADD(YEAR, -20, GETDATE()); -- Fecha fin, hace 20 a√
 -- Bucle de llenado:
 DECLARE @cont INT = 1;
 DECLARE @cantUsuarios INT;
+DECLARE @sexo BIT;
 SELECT @cantUsuarios = COUNT(1) FROM @NombresCompletos;
 WHILE @cont <= @cantUsuarios
 BEGIN
@@ -270,13 +271,18 @@ BEGIN
     -- C√©dulas:
     DECLARE @Cedula VARCHAR(9) = RIGHT('000000000' + CAST(100000000 + ((@cont-1)*100) AS VARCHAR(10)), 9); -- El right es para asegurar los 9 digitos, son
                                                                                                            -- cedulas secuenciales para evitar repetidas
+    SET @sexo = CASE 
+               WHEN RIGHT(@nom, 1) = 'a' THEN 1
+               ELSE 0
+            END;
     DECLARE @Checksum VARBINARY(256);
     SET @Checksum = HASHBYTES('SHA2_256', CONCAT(@nom, @ap1, @ap2, @Cedula));
-    INSERT INTO [dbo].[pv_usuarios] (nombre, primerApellido, segundoApellido, fechaNacimiento, identificacion, nacional, checksum) VALUES (
+    INSERT INTO [dbo].[pv_usuarios] (nombre, primerApellido, segundoApellido, fechaNacimiento, identificacion, nacional, checksum, sexo) VALUES (
         @nom,@ap1,@ap2,
         @FechaNacimiento,
         @Cedula,1,
-        @Checksum
+        @Checksum,
+        @sexo
     );
     SET @cont= @cont+ 1;
 END

@@ -307,6 +307,173 @@ INSERT INTO dbo.pv_tipoPregunta (tipo) VALUES
 ('Escala Likert'),
 ('Sí/No'),
 ('Numérica');
+
+INSERT INTO dbo.pv_preguntas (
+    enunciado,
+    tipoPreguntaID,
+    maxSelecciones,
+    fechaPublicacion,
+    deleted,
+    [order],
+    checksum
+) VALUES
+('¿Cuál es la principal prioridad en la mejora del transporte público?', 1, 1, '2025-07-10', 0, 1, HASHBYTES('SHA2_256', 'P1Q1')),
+('¿Qué tan importante considera la creación de carriles exclusivos para bicicletas?', 3, 1,'2025-07-10', 0, 3, HASHBYTES('SHA2_256', 'P1Q2')),
+('¿El programa de becas debe incluir apoyo psicológico?', 4, 1, '2024-06-08 10:15:00', 0, 1, HASHBYTES('SHA2_256', 'P2Q1')),
+('En una escala del 1 al 5, ¿cuál es la urgencia de implementar este programa?', 3, 1, '2024-06-08 10:25:00', 0, 3, HASHBYTES('SHA2_256', 'P2Q2')),
+('¿Qué tipo de materiales educativos adicionales se necesitan?', 2, 1, '2024-06-08 10:30:00', 0, 4, HASHBYTES('SHA2_256', 'P2Q3')),
+('¿Cuál es el principal desafío de las clínicas móviles en zonas periurbanas?', 1, 1, '2024-06-08 10:35:00', 0, 1, HASHBYTES('SHA2_256', 'P3Q1')),
+('¿Considera que la vacunación periódica es suficiente para prevenir enfermedades?', 4, 1, '2024-06-08 10:40:00', 0, 2, HASHBYTES('SHA2_256', 'P3Q2')),
+('Describa cómo las clínicas móviles pueden mejorar el acceso a la salud.', 2, 1, '2024-06-08 10:45:00', 0, 3, HASHBYTES('SHA2_256', 'P3Q3')),
+('¿Cuántas clínicas móviles son necesarias para cubrir todas las zonas periurbanas?', 5, 1, '2024-06-08 10:50:00', 0, 4, HASHBYTES('SHA2_256', 'P3Q4')),
+('En una escala de 1 a 5, ¿cuán efectiva es la atención primaria brindada por las clínicas móviles?', 3, 5, '2024-06-08 10:55:00', 0, 5, HASHBYTES('SHA2_256', 'P3Q5')),
+('¿Cuáles son las especies nativas más adecuadas para la reforestación?', 1, 5, '2024-06-08 11:00:00', 0, 1, HASHBYTES('SHA2_256', 'P4Q1')),
+('¿Debería involucrarse a la comunidad en la campaña de reforestación?', 4, 1, '2024-06-08 11:05:00', 0, 2, HASHBYTES('SHA2_256', 'P4Q2')),
+('Describa el impacto a largo plazo de la reforestación en el ecosistema local.', 2, 1, '2024-06-08 11:10:00', 0, 3, HASHBYTES('SHA2_256', 'P4Q3')),
+('¿Qué tipo de habilidades digitales son más demandadas en el mercado actual?', 1, 3, '2024-06-08 11:15:00', 0, 1, HASHBYTES('SHA2_256', 'P5Q1')),
+('¿La creación de centros de innovación debe ser una prioridad nacional?', 4, 1, '2024-06-08 11:20:00', 0, 2, HASHBYTES('SHA2_256', 'P5Q2')),
+('En una escala del 1 al 5, ¿cuál es el potencial de crecimiento de startups en su provincia?', 3, 5, '2024-06-08 11:25:00', 0, 3, HASHBYTES('SHA2_256', 'P5Q3')),
+('Mencione tres áreas tecnológicas que considera cruciales para el desarrollo.', 2, 1, '2024-06-08 11:30:00', 0, 4, HASHBYTES('SHA2_256', 'P5Q4')),
+('¿Qué tipo de apoyo es más beneficioso para artistas emergentes?', 1, 1, '2024-06-08 11:35:00', 0, 1, HASHBYTES('SHA2_256', 'P6Q1')),
+('¿Deberían los fondos para producción ser reembolsables?', 4, 1, '2024-06-08 11:40:00', 0, 2, HASHBYTES('SHA2_256', 'P6Q2')),
+('Describa cómo un programa de apoyo puede impactar la escena artística local.', 2, 1, '2024-06-08 11:45:00', 0, 3, HASHBYTES('SHA2_256', 'P6Q3')),
+('¿Cuántos espacios para exposiciones son necesarios en su ciudad?', 5, 1, '2024-06-08 11:50:00', 0, 4, HASHBYTES('SHA2_256', 'P6Q4')),
+('En una escala del 1 al 5, ¿cuán accesible es el arte y la cultura en su comunidad?', 3, 1, '2024-06-08 11:55:00', 0, 5, HASHBYTES('SHA2_256', 'P6Q5'));
+
+INSERT INTO dbo.pv_preguntas (
+    enunciado,
+    tipoPreguntaID,
+    maxSelecciones,
+    fechaPublicacion,
+    deleted,
+    [order],
+    checksum
+) VALUES
+('¿Cuál es la principal prioridad en la mejora del transporte público?', 1, 1, '2025-07-10', 0, 1, HASHBYTES('SHA2_256', 'P1Q1')),
+('¿Qué tan importante considera la creación de carriles exclusivos para bicicletas?', 3, 1,'2025-07-10', 0, 3, HASHBYTES('SHA2_256', 'P1Q2')),
+('¿El programa de becas debe incluir apoyo psicológico?', 4, 1, '2024-06-08 10:15:00', 0, 1, HASHBYTES('SHA2_256', 'P2Q1')),
+('En una escala del 1 al 5, ¿cuál es la urgencia de implementar este programa?', 3, 1, '2024-06-08 10:25:00', 0, 3, HASHBYTES('SHA2_256', 'P2Q2')),
+('¿Qué tipo de materiales educativos adicionales se necesitan?', 2, 1, '2024-06-08 10:30:00', 0, 4, HASHBYTES('SHA2_256', 'P2Q3')),
+('¿Cuál es el principal desafío de las clínicas móviles en zonas periurbanas?', 1, 1, '2024-06-08 10:35:00', 0, 1, HASHBYTES('SHA2_256', 'P3Q1')),
+('¿Considera que la vacunación periódica es suficiente para prevenir enfermedades?', 4, 1, '2024-06-08 10:40:00', 0, 2, HASHBYTES('SHA2_256', 'P3Q2')),
+('Describa cómo las clínicas móviles pueden mejorar el acceso a la salud.', 2, 1, '2024-06-08 10:45:00', 0, 3, HASHBYTES('SHA2_256', 'P3Q3')),
+('¿Cuántas clínicas móviles son necesarias para cubrir todas las zonas periurbanas?', 5, 1, '2024-06-08 10:50:00', 0, 4, HASHBYTES('SHA2_256', 'P3Q4')),
+('En una escala de 1 a 5, ¿cuán efectiva es la atención primaria brindada por las clínicas móviles?', 3, 5, '2024-06-08 10:55:00', 0, 5, HASHBYTES('SHA2_256', 'P3Q5')),
+('¿Cuáles son las especies nativas más adecuadas para la reforestación?', 1, 5, '2024-06-08 11:00:00', 0, 1, HASHBYTES('SHA2_256', 'P4Q1')),
+('¿Debería involucrarse a la comunidad en la campaña de reforestación?', 4, 1, '2024-06-08 11:05:00', 0, 2, HASHBYTES('SHA2_256', 'P4Q2')),
+('Describa el impacto a largo plazo de la reforestación en el ecosistema local.', 2, 1, '2024-06-08 11:10:00', 0, 3, HASHBYTES('SHA2_256', 'P4Q3')),
+('¿Qué tipo de habilidades digitales son más demandadas en el mercado actual?', 1, 3, '2024-06-08 11:15:00', 0, 1, HASHBYTES('SHA2_256', 'P5Q1')),
+('¿La creación de centros de innovación debe ser una prioridad nacional?', 4, 1, '2024-06-08 11:20:00', 0, 2, HASHBYTES('SHA2_256', 'P5Q2')),
+('En una escala del 1 al 5, ¿cuál es el potencial de crecimiento de startups en su provincia?', 3, 5, '2024-06-08 11:25:00', 0, 3, HASHBYTES('SHA2_256', 'P5Q3')),
+('Mencione tres áreas tecnológicas que considera cruciales para el desarrollo.', 2, 1, '2024-06-08 11:30:00', 0, 4, HASHBYTES('SHA2_256', 'P5Q4')),
+('¿Qué tipo de apoyo es más beneficioso para artistas emergentes?', 1, 1, '2024-06-08 11:35:00', 0, 1, HASHBYTES('SHA2_256', 'P6Q1')),
+('¿Deberían los fondos para producción ser reembolsables?', 4, 1, '2024-06-08 11:40:00', 0, 2, HASHBYTES('SHA2_256', 'P6Q2')),
+('Describa cómo un programa de apoyo puede impactar la escena artística local.', 2, 1, '2024-06-08 11:45:00', 0, 3, HASHBYTES('SHA2_256', 'P6Q3')),
+('¿Cuántos espacios para exposiciones son necesarios en su ciudad?', 5, 1, '2024-06-08 11:50:00', 0, 4, HASHBYTES('SHA2_256', 'P6Q4')),
+('En una escala del 1 al 5, ¿cuán accesible es el arte y la cultura en su comunidad?', 3, 1, '2024-06-08 11:55:00', 0, 5, HASHBYTES('SHA2_256', 'P6Q5'));
+INSERT INTO dbo.pv_respuestas (
+    preguntaID,
+    respuesta,
+    url,
+    value,
+    [order], 
+    deleted,
+    checksum
+) VALUES
+
+(1, 'Mejorar el transporte público', NULL, 'Mejorar el transporte público', 1, 0, HASHBYTES('SHA2_256', 'P1Q1_R1')),
+(1, 'Reducir el tráfico', NULL, 'Reducir el tráfico', 2, 0, HASHBYTES('SHA2_256', 'P1Q1_R2')),
+(1, 'Promover la movilidad sostenible', NULL, 'Promover la movilidad sostenible', 3, 0, HASHBYTES('SHA2_256', 'P1Q1_R3')),
+(2, 'Muy importante', NULL, 'Muy importante', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
+(2, 'Importante', NULL, 'Importante', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
+(2, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
+(2, 'Poco Importante', NULL, 'Poco Importante', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
+(2, 'Nada Importante', NULL, 'Nada Importante', 5, 0, HASHBYTES('SHA2_256', 'R5Q2')),
+(3, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+(3, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+(4, 'Muy urgente', NULL, 'Muy urgente', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
+(4, 'Urgente', NULL, 'Urgente', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
+(4, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
+(4, 'Poco Urgente', NULL, 'Poco Urgente', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
+(4, 'Nada Urgente', NULL, 'Nada Urgente', 5, 0, HASHBYTES('SHA2_256', 'R5Q2')),
+
+(5, 'Libros de texto actualizados', NULL, 'Respuesta Abierta', 1, 0, HASHBYTES('SHA2_256', 'P2Q4_R1')),
+
+(6, 'Falta de personal médico especializado', NULL, 'Falta de personal médico especializado', 1, 0, HASHBYTES('SHA2_256', 'P3Q1_R1')),
+(6, 'Problemas de logística y acceso a zonas remotas', NULL, 'Problemas de logística y acceso a zonas remotas', 2, 0, HASHBYTES('SHA2_256', 'P3Q1_R2')),
+(6, 'Financiamiento y sostenibilidad del proyecto', NULL, 'Financiamiento y sostenibilidad del proyecto', 3, 0, HASHBYTES('SHA2_256', 'P3Q1_R3')),
+
+(7, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+(7, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+
+(8, 'Acercan los servicios médicos esenciales.', NULL, 'Respuesta Abierta', 1, 0, HASHBYTES('SHA2_256', 'P3Q3_R1')),
+
+(9, '10', NULL, '10', 1, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
+(9, '25', NULL, '25', 2, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
+(9, '789', NULL, '789', 3, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
+(9, '45', NULL, '45', 4, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
+(9, '3', NULL, '3', 5, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
+
+(10, 'Muy efectiva', NULL, 'Muy efectiva', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
+(10, 'Efectiva', NULL, 'Efectiva', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
+(10, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
+(10, 'Poco efectiva', NULL, 'Poco efectiva', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
+(10, 'Nada efectiva', NULL, 'Nada efectiva', 5, 0, HASHBYTES('SHA2_256', 'R5Q2')),
+
+(11, 'Roble', NULL, 'Roble', 1, 0, HASHBYTES('SHA2_256', 'P4Q1_R1')),
+(11, 'Almendro', NULL, 'Almendro', 2, 0, HASHBYTES('SHA2_256', 'P4Q1_R2')),
+(11, 'Cedro', NULL, 'Cedro', 3, 0, HASHBYTES('SHA2_256', 'P4Q1_R1')),
+(11, 'Guanacaste', NULL, 'Guanacaste', 4, 0, HASHBYTES('SHA2_256', 'P4Q1_R2')),
+(11, 'Ceiba', NULL, 'Ceiba', 5, 0, HASHBYTES('SHA2_256', 'P4Q1_R1')),
+(11, 'Pino', NULL, 'Pino', 6, 0, HASHBYTES('SHA2_256', 'P4Q1_R2')),
+
+(12, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+(12, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+
+(13, 'Aumenta la biodiversidad.', NULL, 'Respuesta - Abierta', 1, 0, HASHBYTES('SHA2_256', 'P4Q3_R1')),
+
+
+(14, 'Programación', NULL, 'Programación', 1, 0, HASHBYTES('SHA2_256', 'P5Q1_R1')),
+(14, 'Inteligencia Artificial', NULL, 'Inteligencia Artificial', 2, 0, HASHBYTES('SHA2_256', 'P5Q1_R2')),
+(14, 'Ciberseguridad', NULL, 'Ciberseguridad', 3, 0, HASHBYTES('SHA2_256', 'P5Q1_R3')),
+(14, 'Desarrollo Web', NULL, 'Desarrollo Web', 4, 0, HASHBYTES('SHA2_256', 'P5Q1_R1')),
+(14, 'Machine Learning', NULL, 'Machine Learning', 5, 0, HASHBYTES('SHA2_256', 'P5Q1_R2')),
+(14, 'Análisis de Datos', NULL, 'Análisis de Datos', 6, 0, HASHBYTES('SHA2_256', 'P5Q1_R3')),
+
+(15, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+(15, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+
+(16, 'Muy efectiva', NULL, 'Muy efectiva', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
+(16, 'Efectiva', NULL, 'Efectiva', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
+(16, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
+(16, 'Poco efectiva', NULL, 'Poco efectiva', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
+(16, 'Nada efectiva', NULL, 'Nada efectiva', 5, 0, HASHBYTES('SHA2_256', 'R5Q2')),
+
+(17, 'Inteligencia Artificial.', NULL, 'Respuesta Abierta', 1, 0, HASHBYTES('SHA2_256', 'P5Q4_R1')),
+
+
+(18, 'Financiación de proyectos y becas', NULL, 'Financiación de proyectos y becas', 1, 0, HASHBYTES('SHA2_256', 'P6Q1_R1')),
+(18, 'Espacios para exposiciones y difusión', NULL, 'Espacios para exposiciones y difusión', 2, 0, HASHBYTES('SHA2_256', 'P6Q1_R2')),
+
+(19, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+(19, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
+
+(20, 'Impulsa el talento local.', NULL, 'Respuesta Abierta', 1, 0, HASHBYTES('SHA2_256', 'P6Q3_R1')),
+
+(21, '5', NULL, '5', 1, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
+(21, '6', NULL, '6', 2, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
+(21, '5', NULL, '5', 3, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
+(21, '48', NULL, '48', 5, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
+(21, '16', NULL, '16', 4, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
+(21, '32', NULL, '32', 6, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
+(21, '3', NULL, '3', 7, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
+
+(22, 'Muy accesible', NULL, 'Muy efectiva', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
+(22, 'Accesible', NULL, 'Accesible', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
+(22, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
+(22, 'Poco accesible', NULL, 'Poco accesible', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
+(22, 'Nada accesible', NULL, 'Nada accesible', 5, 0, HASHBYTES('SHA2_256', 'R5Q2'));
+
 INSERT INTO dbo.pv_severidadLogs (nombre) VALUES
 ('Debug'),
 ('Info'),
@@ -2616,172 +2783,6 @@ VALUES
 
 
 
-INSERT INTO dbo.pv_preguntas (
-    enunciado,
-    tipoPreguntaID,
-    maxSelecciones,
-    fechaPublicacion,
-    deleted,
-    [order],
-    checksum
-) VALUES
-('¿Cuál es la principal prioridad en la mejora del transporte público?', 1, 1, '2025-07-10', 0, 1, HASHBYTES('SHA2_256', 'P1Q1')),
-('¿Qué tan importante considera la creación de carriles exclusivos para bicicletas?', 3, 1,'2025-07-10', 0, 3, HASHBYTES('SHA2_256', 'P1Q2')),
-('¿El programa de becas debe incluir apoyo psicológico?', 4, 1, '2024-06-08 10:15:00', 0, 1, HASHBYTES('SHA2_256', 'P2Q1')),
-('En una escala del 1 al 5, ¿cuál es la urgencia de implementar este programa?', 3, 1, '2024-06-08 10:25:00', 0, 3, HASHBYTES('SHA2_256', 'P2Q2')),
-('¿Qué tipo de materiales educativos adicionales se necesitan?', 2, 1, '2024-06-08 10:30:00', 0, 4, HASHBYTES('SHA2_256', 'P2Q3')),
-('¿Cuál es el principal desafío de las clínicas móviles en zonas periurbanas?', 1, 1, '2024-06-08 10:35:00', 0, 1, HASHBYTES('SHA2_256', 'P3Q1')),
-('¿Considera que la vacunación periódica es suficiente para prevenir enfermedades?', 4, 1, '2024-06-08 10:40:00', 0, 2, HASHBYTES('SHA2_256', 'P3Q2')),
-('Describa cómo las clínicas móviles pueden mejorar el acceso a la salud.', 2, 1, '2024-06-08 10:45:00', 0, 3, HASHBYTES('SHA2_256', 'P3Q3')),
-('¿Cuántas clínicas móviles son necesarias para cubrir todas las zonas periurbanas?', 5, 1, '2024-06-08 10:50:00', 0, 4, HASHBYTES('SHA2_256', 'P3Q4')),
-('En una escala de 1 a 5, ¿cuán efectiva es la atención primaria brindada por las clínicas móviles?', 3, 5, '2024-06-08 10:55:00', 0, 5, HASHBYTES('SHA2_256', 'P3Q5')),
-('¿Cuáles son las especies nativas más adecuadas para la reforestación?', 1, 5, '2024-06-08 11:00:00', 0, 1, HASHBYTES('SHA2_256', 'P4Q1')),
-('¿Debería involucrarse a la comunidad en la campaña de reforestación?', 4, 1, '2024-06-08 11:05:00', 0, 2, HASHBYTES('SHA2_256', 'P4Q2')),
-('Describa el impacto a largo plazo de la reforestación en el ecosistema local.', 2, 1, '2024-06-08 11:10:00', 0, 3, HASHBYTES('SHA2_256', 'P4Q3')),
-('¿Qué tipo de habilidades digitales son más demandadas en el mercado actual?', 1, 3, '2024-06-08 11:15:00', 0, 1, HASHBYTES('SHA2_256', 'P5Q1')),
-('¿La creación de centros de innovación debe ser una prioridad nacional?', 4, 1, '2024-06-08 11:20:00', 0, 2, HASHBYTES('SHA2_256', 'P5Q2')),
-('En una escala del 1 al 5, ¿cuál es el potencial de crecimiento de startups en su provincia?', 3, 5, '2024-06-08 11:25:00', 0, 3, HASHBYTES('SHA2_256', 'P5Q3')),
-('Mencione tres áreas tecnológicas que considera cruciales para el desarrollo.', 2, 1, '2024-06-08 11:30:00', 0, 4, HASHBYTES('SHA2_256', 'P5Q4')),
-('¿Qué tipo de apoyo es más beneficioso para artistas emergentes?', 1, 1, '2024-06-08 11:35:00', 0, 1, HASHBYTES('SHA2_256', 'P6Q1')),
-('¿Deberían los fondos para producción ser reembolsables?', 4, 1, '2024-06-08 11:40:00', 0, 2, HASHBYTES('SHA2_256', 'P6Q2')),
-('Describa cómo un programa de apoyo puede impactar la escena artística local.', 2, 1, '2024-06-08 11:45:00', 0, 3, HASHBYTES('SHA2_256', 'P6Q3')),
-('¿Cuántos espacios para exposiciones son necesarios en su ciudad?', 5, 1, '2024-06-08 11:50:00', 0, 4, HASHBYTES('SHA2_256', 'P6Q4')),
-('En una escala del 1 al 5, ¿cuán accesible es el arte y la cultura en su comunidad?', 3, 1, '2024-06-08 11:55:00', 0, 5, HASHBYTES('SHA2_256', 'P6Q5'));
-
-INSERT INTO dbo.pv_preguntas (
-    enunciado,
-    tipoPreguntaID,
-    maxSelecciones,
-    fechaPublicacion,
-    deleted,
-    [order],
-    checksum
-) VALUES
-('¿Cuál es la principal prioridad en la mejora del transporte público?', 1, 1, '2025-07-10', 0, 1, HASHBYTES('SHA2_256', 'P1Q1')),
-('¿Qué tan importante considera la creación de carriles exclusivos para bicicletas?', 3, 1,'2025-07-10', 0, 3, HASHBYTES('SHA2_256', 'P1Q2')),
-('¿El programa de becas debe incluir apoyo psicológico?', 4, 1, '2024-06-08 10:15:00', 0, 1, HASHBYTES('SHA2_256', 'P2Q1')),
-('En una escala del 1 al 5, ¿cuál es la urgencia de implementar este programa?', 3, 1, '2024-06-08 10:25:00', 0, 3, HASHBYTES('SHA2_256', 'P2Q2')),
-('¿Qué tipo de materiales educativos adicionales se necesitan?', 2, 1, '2024-06-08 10:30:00', 0, 4, HASHBYTES('SHA2_256', 'P2Q3')),
-('¿Cuál es el principal desafío de las clínicas móviles en zonas periurbanas?', 1, 1, '2024-06-08 10:35:00', 0, 1, HASHBYTES('SHA2_256', 'P3Q1')),
-('¿Considera que la vacunación periódica es suficiente para prevenir enfermedades?', 4, 1, '2024-06-08 10:40:00', 0, 2, HASHBYTES('SHA2_256', 'P3Q2')),
-('Describa cómo las clínicas móviles pueden mejorar el acceso a la salud.', 2, 1, '2024-06-08 10:45:00', 0, 3, HASHBYTES('SHA2_256', 'P3Q3')),
-('¿Cuántas clínicas móviles son necesarias para cubrir todas las zonas periurbanas?', 5, 1, '2024-06-08 10:50:00', 0, 4, HASHBYTES('SHA2_256', 'P3Q4')),
-('En una escala de 1 a 5, ¿cuán efectiva es la atención primaria brindada por las clínicas móviles?', 3, 5, '2024-06-08 10:55:00', 0, 5, HASHBYTES('SHA2_256', 'P3Q5')),
-('¿Cuáles son las especies nativas más adecuadas para la reforestación?', 1, 5, '2024-06-08 11:00:00', 0, 1, HASHBYTES('SHA2_256', 'P4Q1')),
-('¿Debería involucrarse a la comunidad en la campaña de reforestación?', 4, 1, '2024-06-08 11:05:00', 0, 2, HASHBYTES('SHA2_256', 'P4Q2')),
-('Describa el impacto a largo plazo de la reforestación en el ecosistema local.', 2, 1, '2024-06-08 11:10:00', 0, 3, HASHBYTES('SHA2_256', 'P4Q3')),
-('¿Qué tipo de habilidades digitales son más demandadas en el mercado actual?', 1, 3, '2024-06-08 11:15:00', 0, 1, HASHBYTES('SHA2_256', 'P5Q1')),
-('¿La creación de centros de innovación debe ser una prioridad nacional?', 4, 1, '2024-06-08 11:20:00', 0, 2, HASHBYTES('SHA2_256', 'P5Q2')),
-('En una escala del 1 al 5, ¿cuál es el potencial de crecimiento de startups en su provincia?', 3, 5, '2024-06-08 11:25:00', 0, 3, HASHBYTES('SHA2_256', 'P5Q3')),
-('Mencione tres áreas tecnológicas que considera cruciales para el desarrollo.', 2, 1, '2024-06-08 11:30:00', 0, 4, HASHBYTES('SHA2_256', 'P5Q4')),
-('¿Qué tipo de apoyo es más beneficioso para artistas emergentes?', 1, 1, '2024-06-08 11:35:00', 0, 1, HASHBYTES('SHA2_256', 'P6Q1')),
-('¿Deberían los fondos para producción ser reembolsables?', 4, 1, '2024-06-08 11:40:00', 0, 2, HASHBYTES('SHA2_256', 'P6Q2')),
-('Describa cómo un programa de apoyo puede impactar la escena artística local.', 2, 1, '2024-06-08 11:45:00', 0, 3, HASHBYTES('SHA2_256', 'P6Q3')),
-('¿Cuántos espacios para exposiciones son necesarios en su ciudad?', 5, 1, '2024-06-08 11:50:00', 0, 4, HASHBYTES('SHA2_256', 'P6Q4')),
-('En una escala del 1 al 5, ¿cuán accesible es el arte y la cultura en su comunidad?', 3, 1, '2024-06-08 11:55:00', 0, 5, HASHBYTES('SHA2_256', 'P6Q5'));
-
-INSERT INTO dbo.pv_respuestas (
-    preguntaID,
-    respuesta,
-    url,
-    value,
-    [order], 
-    deleted,
-    checksum
-) VALUES
-
-(1, 'Mejorar el transporte público', NULL, 'Mejorar el transporte público', 1, 0, HASHBYTES('SHA2_256', 'P1Q1_R1')),
-(1, 'Reducir el tráfico', NULL, 'Reducir el tráfico', 2, 0, HASHBYTES('SHA2_256', 'P1Q1_R2')),
-(1, 'Promover la movilidad sostenible', NULL, 'Promover la movilidad sostenible', 3, 0, HASHBYTES('SHA2_256', 'P1Q1_R3')),
-(2, 'Muy importante', NULL, 'Muy importante', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
-(2, 'Importante', NULL, 'Importante', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
-(2, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
-(2, 'Poco Importante', NULL, 'Poco Importante', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
-(2, 'Nada Importante', NULL, 'Nada Importante', 5, 0, HASHBYTES('SHA2_256', 'R5Q2')),
-(3, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-(3, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-(4, 'Muy urgente', NULL, 'Muy urgente', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
-(4, 'Urgente', NULL, 'Urgente', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
-(4, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
-(4, 'Poco Urgente', NULL, 'Poco Urgente', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
-(4, 'Nada Urgente', NULL, 'Nada Urgente', 5, 0, HASHBYTES('SHA2_256', 'R5Q2')),
-
-(5, 'Libros de texto actualizados', NULL, 'Respuesta Abierta', 1, 0, HASHBYTES('SHA2_256', 'P2Q4_R1')),
-
-(6, 'Falta de personal médico especializado', NULL, 'Falta de personal médico especializado', 1, 0, HASHBYTES('SHA2_256', 'P3Q1_R1')),
-(6, 'Problemas de logística y acceso a zonas remotas', NULL, 'Problemas de logística y acceso a zonas remotas', 2, 0, HASHBYTES('SHA2_256', 'P3Q1_R2')),
-(6, 'Financiamiento y sostenibilidad del proyecto', NULL, 'Financiamiento y sostenibilidad del proyecto', 3, 0, HASHBYTES('SHA2_256', 'P3Q1_R3')),
-
-(7, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-(7, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-
-(8, 'Acercan los servicios médicos esenciales.', NULL, 'Respuesta Abierta', 1, 0, HASHBYTES('SHA2_256', 'P3Q3_R1')),
-
-(9, '10', NULL, '10', 1, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
-(9, '25', NULL, '25', 2, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
-(9, '789', NULL, '789', 3, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
-(9, '45', NULL, '45', 4, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
-(9, '3', NULL, '3', 5, 0, HASHBYTES('SHA2_256', 'P3Q4_R1')),
-
-(10, 'Muy efectiva', NULL, 'Muy efectiva', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
-(10, 'Efectiva', NULL, 'Efectiva', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
-(10, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
-(10, 'Poco efectiva', NULL, 'Poco efectiva', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
-(10, 'Nada efectiva', NULL, 'Nada efectiva', 5, 0, HASHBYTES('SHA2_256', 'R5Q2')),
-
-(11, 'Roble', NULL, 'Roble', 1, 0, HASHBYTES('SHA2_256', 'P4Q1_R1')),
-(11, 'Almendro', NULL, 'Almendro', 2, 0, HASHBYTES('SHA2_256', 'P4Q1_R2')),
-(11, 'Cedro', NULL, 'Cedro', 3, 0, HASHBYTES('SHA2_256', 'P4Q1_R1')),
-(11, 'Guanacaste', NULL, 'Guanacaste', 4, 0, HASHBYTES('SHA2_256', 'P4Q1_R2')),
-(11, 'Ceiba', NULL, 'Ceiba', 5, 0, HASHBYTES('SHA2_256', 'P4Q1_R1')),
-(11, 'Pino', NULL, 'Pino', 6, 0, HASHBYTES('SHA2_256', 'P4Q1_R2')),
-
-(12, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-(12, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-
-(13, 'Aumenta la biodiversidad.', NULL, 'Respuesta - Abierta', 1, 0, HASHBYTES('SHA2_256', 'P4Q3_R1')),
-
-
-(14, 'Programación', NULL, 'Programación', 1, 0, HASHBYTES('SHA2_256', 'P5Q1_R1')),
-(14, 'Inteligencia Artificial', NULL, 'Inteligencia Artificial', 2, 0, HASHBYTES('SHA2_256', 'P5Q1_R2')),
-(14, 'Ciberseguridad', NULL, 'Ciberseguridad', 3, 0, HASHBYTES('SHA2_256', 'P5Q1_R3')),
-(14, 'Desarrollo Web', NULL, 'Desarrollo Web', 4, 0, HASHBYTES('SHA2_256', 'P5Q1_R1')),
-(14, 'Machine Learning', NULL, 'Machine Learning', 5, 0, HASHBYTES('SHA2_256', 'P5Q1_R2')),
-(14, 'Análisis de Datos', NULL, 'Análisis de Datos', 6, 0, HASHBYTES('SHA2_256', 'P5Q1_R3')),
-
-(15, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-(15, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-
-(16, 'Muy efectiva', NULL, 'Muy efectiva', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
-(16, 'Efectiva', NULL, 'Efectiva', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
-(16, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
-(16, 'Poco efectiva', NULL, 'Poco efectiva', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
-(16, 'Nada efectiva', NULL, 'Nada efectiva', 5, 0, HASHBYTES('SHA2_256', 'R5Q2')),
-
-(17, 'Inteligencia Artificial.', NULL, 'Respuesta Abierta', 1, 0, HASHBYTES('SHA2_256', 'P5Q4_R1')),
-
-
-(18, 'Financiación de proyectos y becas', NULL, 'Financiación de proyectos y becas', 1, 0, HASHBYTES('SHA2_256', 'P6Q1_R1')),
-(18, 'Espacios para exposiciones y difusión', NULL, 'Espacios para exposiciones y difusión', 2, 0, HASHBYTES('SHA2_256', 'P6Q1_R2')),
-
-(19, 'Sí', NULL, 'Sí', 1, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-(19, 'No', NULL, 'No', 2, 0, HASHBYTES('SHA2_256', 'P2Q1_R1')),
-
-(20, 'Impulsa el talento local.', NULL, 'Respuesta Abierta', 1, 0, HASHBYTES('SHA2_256', 'P6Q3_R1')),
-
-(21, '5', NULL, '5', 1, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
-(21, '6', NULL, '6', 2, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
-(21, '5', NULL, '5', 3, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
-(21, '48', NULL, '48', 5, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
-(21, '16', NULL, '16', 4, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
-(21, '32', NULL, '32', 6, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
-(21, '3', NULL, '3', 7, 0, HASHBYTES('SHA2_256', 'P6Q4_R1')),
-
-(22, 'Muy accesible', NULL, 'Muy efectiva', 1, 0, HASHBYTES('SHA2_256', 'R1Q2')),
-(22, 'Accesible', NULL, 'Accesible', 2, 0, HASHBYTES('SHA2_256', 'R2Q2')),
-(22, 'Regular', NULL, 'Regular', 3, 0, HASHBYTES('SHA2_256', 'R3Q2')),
-(22, 'Poco accesible', NULL, 'Poco accesible', 4, 0, HASHBYTES('SHA2_256', 'R4Q2')),
-(22, 'Nada accesible', NULL, 'Nada accesible', 5, 0, HASHBYTES('SHA2_256', 'R5Q2'));
 
 INSERT INTO pv_statusEtapaProyecto(nombre, descripcion) VALUES
 ('Planificada', 'Etapa que todavía no está en ejecución pero ya está confirmada'),

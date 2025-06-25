@@ -210,7 +210,7 @@ VALUES ('Administrar sistema completo', 'ADMIN_ALL'),
 ('Gestionar candidatos', 'CAND_MNG'), ('Gestionar partidos', 'PARTY_MNG'),
 ('Acceso API', 'API_ACC'), ('Acceso móvil', 'MOB_ACC'),
 ('Gestionar configuración', 'CFG_MNG'), ('Ver dashboard', 'VIEW_DASH'),
-('Gestionar auditoría', 'AUDIT_MNG');
+('Gestionar auditoría', 'AUDIT_MNG'), ('Comentar propuestas', 'COMENTAR');
 GO
 
 INSERT INTO pv_nivelEducacion(name)

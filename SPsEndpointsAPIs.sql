@@ -127,12 +127,6 @@ BEGIN
 								  CONCAT_WS('|', @PropuestaID, src.segID, @UsuarioAccion, 0)));
 		END
 
-        IF @SegmentosImpactoJS IS NOT NULL
-        BEGIN
-            INSERT dbo.pv_propuestaSegmentosImpacto (propuestaID, segmentoID)
-            SELECT @PropuestaID, value
-            FROM OPENJSON(@SegmentosImpactoJS);
-        END
         -- adjuntos
         IF @AdjuntosJS IS NOT NULL
         BEGIN
@@ -147,7 +141,7 @@ BEGIN
                    JSON_VALUE(value,'$.tipoDocumentoID'),
                    (SELECT TOP 1 estadoDocumentoID
                     FROM dbo.pv_estadoDocumento
-                    WHERE nombre = N'En Revision'),
+                    WHERE nombre = N'En revisión'),
                    @Ahora,
                    1,
                    JSON_VALUE(value,'$.idLegal'),
@@ -166,7 +160,7 @@ BEGIN
         (@VersionID,
          -- validadores genericos 
          (SELECT TOP 1 grupoID FROM dbo.pv_grupoValidador WHERE tipoID = 1 ORDER BY grupoID),
-         @Ahora, N'En Revision', NULL, @Ahora);
+         @Ahora, N'En revisión', NULL, @Ahora);
         -- crear logs
         INSERT dbo.pv_logs
         (descripcion, [timestamp], computador, usuario, trace,
@@ -196,7 +190,6 @@ BEGIN
     END CATCH
 END
 GO
-
 
 CREATE OR ALTER PROCEDURE dbo.sp_RevisarPropuesta
     @PropuestaId INT,

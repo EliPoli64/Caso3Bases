@@ -455,3 +455,207 @@ BEGIN
     END CATCH;
 END;
 GO
+
+
+
+
+IF OBJECT_ID('usp_RevisarPropuesta', 'P') IS NOT NULL
+    DROP PROCEDURE usp_RevisarPropuesta;
+GO
+
+CREATE PROCEDURE usp_RevisarPropuesta
+    @PropuestaID INT,
+    @RevisorID INT, 
+    @ResultadoFinal NVARCHAR(50), 
+    @ComentariosRevision NVARCHAR(MAX) = NULL,
+    @TipoRevision NVARCHAR(50), 
+    
+    @MensajeSalida NVARCHAR(255) OUTPUT 
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    DECLARE @EstadoActualID INT;
+    DECLARE @FechaActualUTC DATETIME = GETUTCDATE();
+    DECLARE @NuevoEstadoID INT;
+    DECLARE @Internal_AI_LLM_ValidationJSON NVARCHAR(MAX);
+    DECLARE @Internal_AI_LLM_ModeloID INT;
+    DECLARE @Internal_AI_LLM_EsValido BIT;
+    DECLARE @Internal_AI_LLM_Confianza DECIMAL(5,2);
+
+    DECLARE @LogDescripcion VARCHAR(100);
+    DECLARE @LogTrace NVARCHAR(MAX); -- CAMBIO: De VARCHAR(100) a NVARCHAR(MAX)
+    DECLARE @LogTipoID INT;
+    DECLARE @LogOrigenID INT = 2; -- Asumiendo 2 es 'SP' en pv_origenLog
+    DECLARE @LogSeveridadID INT;
+    DECLARE @LogUsuario VARCHAR(50);
+    DECLARE @LogComputador VARCHAR(50) = 'SQL_SERVER_ENGINE'; 
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        SELECT
+            @EstadoActualID = p.estadoID
+        FROM
+            pv_propuestas AS p
+        WHERE
+            p.propuestaID = @PropuestaID;
+
+        IF @EstadoActualID IS NULL
+        BEGIN
+            SET @MensajeSalida = 'Error: La propuesta con ID ' + CAST(@PropuestaID AS NVARCHAR) + ' no existe.';
+            SET @LogDescripcion = 'Error: Propuesta no encontrada para revisión.';
+            SET @LogTrace = 'Intentando revisar propuestaID: ' + CAST(@PropuestaID AS NVARCHAR) + '. Propuesta no existe.';
+            SET @LogTipoID = 2; 
+            SET @LogSeveridadID = 3; 
+            SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A'); 
+            EXEC [dbo].[SP_InsertarLog] 
+                @descripcion = @LogDescripcion, 
+                @trace = @LogTrace, 
+                @tipologid = @LogTipoID, 
+                @origenlogid = @LogOrigenID, 
+                @logseveridadid = @LogSeveridadID, 
+                @usuario = @LogUsuario, 
+                @computador = @LogComputador, 
+                @refId1 = @PropuestaID;
+
+            ROLLBACK TRANSACTION;
+            RETURN 1;
+        END;
+
+        IF @EstadoActualID NOT IN ( 5) --Revisa únicamente las propuestas colocadas en revisión
+        BEGIN
+            DECLARE @EstadoNombreActual NVARCHAR(50);
+            SELECT @EstadoNombreActual = nombreEstado FROM pv_estadoPropuesta WHERE estadoID = @EstadoActualID;
+            SET @MensajeSalida = 'Advertencia: La propuesta con ID ' + CAST(@PropuestaID AS NVARCHAR) + ' ya se encuentra en estado "' + @EstadoNombreActual + '". No se puede revisar.';
+            
+            -- INVOCACIÓN DEL SP DE LOGS: Estado no válido para revisión
+            SET @LogDescripcion = 'Advertencia: Propuesta en estado no revisable.';
+            SET @LogTrace = 'PropuestaID: ' + CAST(@PropuestaID AS NVARCHAR) + ' en estado: ' + @EstadoNombreActual;
+            SET @LogTipoID = 3; -- Asumiendo 3 es 'Advertencia' en pv_tipoLog
+            SET @LogSeveridadID = 2; -- Asumiendo 2 es 'Advertencia' en pv_logSeveridad
+            SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A');
+            EXEC [dbo].[SP_InsertarLog] 
+                @descripcion = @LogDescripcion, 
+                @trace = @LogTrace, 
+                @tipologid = @LogTipoID, 
+                @origenlogid = @LogOrigenID, -- CAMBIO: Usar la variable @LogOrigenID
+                @logseveridadid = @LogSeveridadID, 
+                @usuario = @LogUsuario, 
+                @computador = @LogComputador, 
+                @refId1 = @PropuestaID,
+                @valor1 = @EstadoNombreActual,
+                @valor2 = @TipoRevision;
+
+            ROLLBACK TRANSACTION;
+            RETURN 2; 
+        END;
+
+        SELECT TOP 1
+            @Internal_AI_LLM_ValidationJSON = resultado,
+            @Internal_AI_LLM_ModeloID = modeloUsado,
+            @Internal_AI_LLM_EsValido = aprobado,
+            @Internal_AI_LLM_Confianza = confianza
+        FROM
+            pv_validacionIA
+        WHERE
+            propuestaID = @PropuestaID
+        ORDER BY
+            fechaValidacion DESC;
+
+        IF @ResultadoFinal = 'Aprobada'
+        BEGIN
+            SET @NuevoEstadoID = 6; -- 'Publicada' (Corrección de 1 a 6 según tu script de llenado)
+        END
+        ELSE IF @ResultadoFinal = 'Rechazada'
+        BEGIN
+            SET @NuevoEstadoID = 4; -- 'Rechazada'
+        END
+        ELSE
+        BEGIN
+            SET @MensajeSalida = 'Error: El resultado final de la revisión debe ser ''Aprobada'' o ''Rechazada''.';
+
+            SET @LogDescripcion = 'Error: Resultado final de revisión inválido.';
+            SET @LogTrace = 'PropuestaID: ' + CAST(@PropuestaID AS NVARCHAR) + '. ResultadoFinal: ' + @ResultadoFinal;
+            SET @LogTipoID = 2; -- Error
+            SET @LogSeveridadID = 3; -- Error
+            SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A');
+            EXEC [dbo].[SP_InsertarLog] 
+                @descripcion = @LogDescripcion, 
+                @trace = @LogTrace, 
+                @tipologid = @LogTipoID, 
+                @origenlogid = @LogOrigenID, -- CAMBIO: Usar la variable @LogOrigenID
+                @logseveridadid = @LogSeveridadID, 
+                @usuario = @LogUsuario, 
+                @computador = @LogComputador, 
+                @refId1 = @PropuestaID, 
+                @valor1 = @ResultadoFinal;
+
+            ROLLBACK TRANSACTION;
+            RETURN 3;
+        END;
+
+        UPDATE pv_propuestas
+        SET
+            estadoID = @NuevoEstadoID
+        WHERE
+            propuestaID = @PropuestaID;
+
+        COMMIT TRANSACTION;
+        SET @MensajeSalida = 'Revisión de propuesta ' + CAST(@PropuestaID AS NVARCHAR) + ' completada. Estado: ' + @ResultadoFinal + '.';
+        
+        SET @LogDescripcion = 'Revisión de propuesta completada.';
+        SET @LogTrace = 'PropuestaID: ' + CAST(@PropuestaID AS NVARCHAR) + ' ' + @ResultadoFinal + '. RevisorID: ' + CAST(@RevisorID AS NVARCHAR);
+        SET @LogTipoID = 1; -- Asumiendo 1 es 'Auditoria'
+        SET @LogSeveridadID = 1; -- Asumiendo 1 es 'Informativo'
+        SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A');
+        EXEC [dbo].[SP_InsertarLog] 
+            @descripcion = @LogDescripcion, 
+            @trace = @LogTrace, 
+            @tipologid = @LogTipoID, 
+            @origenlogid = @LogOrigenID, 
+            @logseveridadid = @LogSeveridadID, 
+            @usuario = @LogUsuario, 
+            @computador = @LogComputador, 
+            @refId1 = @PropuestaID, 
+            @refId2 = @RevisorID, 
+            @valor1 = @ResultadoFinal, 
+            @valor2 = @TipoRevision;
+
+        RETURN 0;
+
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        DECLARE @ErrorMessage NVARCHAR(MAX) = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
+        DECLARE @ErrorState INT = ERROR_STATE();
+
+        SET @MensajeSalida = 'Error en usp_RevisarPropuesta: ' + @ErrorMessage;
+        
+        SET @LogDescripcion = 'Error al revisar propuesta.';
+        SET @LogTrace = 'PropuestaID: ' + CAST(@PropuestaID AS NVARCHAR) + '. Error: ' + @ErrorMessage + '. Linea: ' + CAST(ERROR_LINE() AS NVARCHAR);
+        SET @LogTipoID = 2; -- Error
+        SET @LogSeveridadID = 3; -- Error
+        SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A');
+        EXEC [dbo].[SP_InsertarLog] 
+            @descripcion = @LogDescripcion, 
+            @trace = @LogTrace, 
+            @tipologid = @LogTipoID, 
+            @origenlogid = @LogOrigenID, -- CAMBIO: Usar la variable @LogOrigenID
+            @logseveridadid = @LogSeveridadID, 
+            @usuario = @LogUsuario, 
+            @computador = @LogComputador, 
+            @refId1 = @PropuestaID, 
+            @refId2 = @RevisorID, 
+            @valor1 = @ResultadoFinal, 
+            @valor2 = @TipoRevision;
+
+        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+        RETURN -1; 
+    END CATCH;
+END;
+GO

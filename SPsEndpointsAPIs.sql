@@ -287,6 +287,9 @@ BEGIN
     END CATCH
 END;
 GO
+
+
+
 CREATE OR ALTER PROCEDURE dbo.sp_RepartirDividendos
 AS
 BEGIN

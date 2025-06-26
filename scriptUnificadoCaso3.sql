@@ -3783,173 +3783,6 @@ BEGIN
     
     SET @usuarioID = @usuarioID + 1;
 END
-DECLARE @num_usuarios INT = 1000;
-DECLARE @num_preguntas INT = 22;
-DECLARE @current_user INT = 1;
-DECLARE @current_pregunta INT;
-DECLARE @respuestaID INT;
-DECLARE @checksum VARBINARY(500);
-DECLARE @valor VARCHAR(500);
-DECLARE @fechaRespuesta DATETIME;
-DECLARE @ncRespuesta VARBINARY(256);
-DECLARE @tokenGUID UNIQUEIDENTIFIER;
-DECLARE @pesoRespuesta INT;
-DECLARE @contrasenia VARCHAR(50);
-DECLARE @llaveUsuario VARCHAR(100);
-
-
-CREATE TABLE #MapeoRespuestasPreguntas (
-    RespuestaID INT PRIMARY KEY,
-    PreguntaID INT,
-	TextoRespuesta varchar(500)
-);
-INSERT INTO #MapeoRespuestasPreguntas (RespuestaID, PreguntaID, TextoRespuesta) VALUES
-(1, 1, 'Mejorar el transporte público'),
-(2, 1, 'Reducir el tráfico'),
-(3, 1, 'Promover la movilidad sostenible'),
-(4, 2, 'Muy importante'),
-(5, 2, 'Importante'),
-(6, 2, 'Regular'),
-(7, 2, 'Poco Importante'),
-(8, 2, 'Nada Importante'),
-(9, 3, 'Sí'),
-(10, 3, 'No'),
-(11, 4, 'Muy urgente'),
-(12, 4, 'Urgente'),
-(13, 4, 'Regular'),
-(14, 4, 'Poco Urgente'),
-(15, 4, 'Nada Urgente'),
-(16, 5, 'Libros de texto actualizados'),
-(17, 6, 'Falta de personal médico especializado'),
-(18, 6, 'Problemas de logística y acceso a zonas remotas'),
-(19, 6, 'Financiamiento y sostenibilidad del proyecto'),
-(20, 7, 'Sí'),
-(21, 7, 'No'),
-(22, 8, 'Acercan los servicios médicos esenciales.'),
-(23, 9, '10'), 
-(24, 9, '25'),
-(25, 9, '789'),
-(26, 9, '45'),
-(27, 9, '3'),
-(28, 10, 'Muy efectiva'),
-(29, 10, 'Efectiva'),
-(30, 10, 'Regular'),
-(31, 10, 'Poco efectiva'),
-(32, 10, 'Nada efectiva'),
-(33, 11, 'Roble'),
-(34, 11, 'Almendro'),
-(35, 11, 'Cedro'),
-(36, 11, 'Guanacaste'),
-(37, 11, 'Ceiba'),
-(38, 11, 'Pino'),
-(39, 12, 'Sí'),
-(40, 12, 'No'),
-(41, 13, 'Aumenta la biodiversidad.'),
-(42, 14, 'Programación'),
-(43, 14, 'Inteligencia Artificial'),
-(44, 14, 'Ciberseguridad'),
-(45, 14, 'Desarrollo Web'),
-(46, 14, 'Machine Learning'),
-(47, 14, 'Análisis de Datos'),
-(48, 15, 'Sí'),
-(49, 15, 'No'),
-(50, 16, 'Muy efectiva'),
-(51, 16, 'Efectiva'),
-(52, 16, 'Regular'),
-(53, 16, 'Poco efectiva'),
-(54, 16, 'Nada efectiva'),
-(55, 17, 'Inteligencia Artificial.'),
-(56, 18, 'Financiación de proyectos y becas'),
-(57, 18, 'Espacios para exposiciones y difusión'),
-(58, 19, 'Sí'),
-(59, 19, 'No'),
-(60, 20, 'Impulsa el talento local.'),
-(61, 21, '5'), 
-(62, 21, '6'),
-(63, 21, '5'),
-(64, 21, '48'),
-(65, 21, '16'),
-(66, 21, '32'),
-(67, 21, '3'),
-(68, 22, 'Muy accesible'),
-(69, 22, 'Accesible'),
-(70, 22, 'Regular'),
-(71, 22, 'Poco accesible'),
-(72, 22, 'Nada accesible');
-
--- Bucle para cada usuario, de manera que cada usuario haya contestado las 22 preguntas.
-WHILE @current_user <= @num_usuarios
-BEGIN
-    SET @current_pregunta = 1;
-    SET @tokenGUID = NEWID(); 
-
-    WHILE @current_pregunta <= @num_preguntas
-    BEGIN
-        -- Seleccionar una respuesta aleatoria que pertenezca a la pregunta actual
-        SELECT TOP 1 @respuestaID = mrp.RespuestaID
-        FROM #MapeoRespuestasPreguntas mrp
-        WHERE mrp.PreguntaID = @current_pregunta
-        ORDER BY NEWID();
-
-        SET @checksum = CONVERT(VARBINARY(500), HASHBYTES('SHA2_256', CONVERT(VARCHAR(MAX), NEWID())));
-
-        SELECT TOP 1
-            @respuestaID = mrp.RespuestaID,
-            @valor = mrp.TextoRespuesta
-        FROM #MapeoRespuestasPreguntas mrp
-        WHERE mrp.PreguntaID = @current_pregunta
-        ORDER BY NEWID();
-
-        SET @fechaRespuesta = GETDATE();
-        
-		DECLARE @aa VARBINARY(255) = 
-		(SELECT lo.llaveCifrada FROM pv_llavesUsuarios lo where usuarioID = @current_user);
-
-		SET @contrasenia = (SELECT TOP 1 
-            UPPER(LEFT(nombre, 2)) + 
-            UPPER(LEFT(primerApellido, 2)) + 
-            UPPER(LEFT(segundoApellido, 2)) + 
-            RIGHT(identificacion, 4) 
-        FROM pv_usuarios 
-        WHERE userid = @current_user
-		);
-
-		SET @llaveUsuario = DECRYPTBYPASSPHRASE(@contrasenia, @aa)
-
-		SET @ncRespuesta = ENCRYPTBYPASSPHRASE(@llaveUsuario, CAST(@current_user AS VARCHAR(5)) ) --ENCRIPTA LA LLAVE DEL USUARIO CON SU USER ID
-        
-		SELECT TOP 1 @pesoRespuesta = p.pesoID 
-        FROM dbo.pv_pesoRespuesta p
-        ORDER BY NEWID();
-
-        INSERT INTO dbo.pv_respuestaParticipante (
-            preguntaID,
-            respuestaID,
-            checksum,
-            valor,
-            fechaRespuesta,
-            ncRespuesta,
-            tokenGUID,
-            pesoRespuesta
-        )
-        VALUES (
-            @current_pregunta,
-            @respuestaID,
-            @checksum,
-            @valor,
-            @fechaRespuesta,
-            @ncRespuesta,
-            @tokenGUID,
-            @pesoRespuesta
-        );
-
-        SET @current_pregunta = @current_pregunta + 1;
-    END;
-
-    SET @current_user = @current_user + 1;
-END;
-DROP TABLE #MapeoRespuestasPreguntas;
-GO
 
 INSERT INTO dbo.pv_votacion (
     tipoVotacionID,
@@ -4040,10 +3873,9 @@ INSERT INTO #ObjetivosVotacion (Descripcion) VALUES
 ('Aprobar programa de capacitación digital para adultos mayores');
 
 -- Insertar datos aleatorios en pv_votacionesObjetivos
-DECLARE @i INT = 1;
+SET @i = 1;
 DECLARE @randomVotacionID INT;
 DECLARE @randomObjetivoID INT;
-DECLARE @descripcion VARCHAR(500);
 DECLARE @fechaModificacion DATETIME;
 DECLARE @deleted BIT;
 
@@ -4472,6 +4304,232 @@ INSERT INTO pv_propuestaVotacion (
 (18, 6, 6,364, 0, HASHBYTES('SHA2_256', 'PropuestaVotacion6-6-364'));
 
 SET IDENTITY_INSERT pv_propuestaVotacion OFF;
+
+DECLARE @i INT = 0;
+DROP TABLE IF EXISTS #MapeoRespuestasPreguntas;
+CREATE TABLE #MapeoRespuestasPreguntas (
+    RespuestaID INT PRIMARY KEY,
+    PreguntaID INT,
+	TextoRespuesta varchar(500)
+);
+INSERT INTO #MapeoRespuestasPreguntas (RespuestaID, PreguntaID, TextoRespuesta) VALUES
+(1, 1, 'Mejorar el transporte público'),
+(2, 1, 'Reducir el tráfico'),
+(3, 1, 'Promover la movilidad sostenible'),
+(4, 2, 'Muy importante'),
+(5, 2, 'Importante'),
+(6, 2, 'Regular'),
+(7, 2, 'Poco Importante'),
+(8, 2, 'Nada Importante'),
+(9, 3, 'Sí'),
+(10, 3, 'No'),
+(11, 4, 'Muy urgente'),
+(12, 4, 'Urgente'),
+(13, 4, 'Regular'),
+(14, 4, 'Poco Urgente'),
+(15, 4, 'Nada Urgente'),
+(16, 5, 'Libros de texto actualizados'),
+(17, 6, 'Falta de personal médico especializado'),
+(18, 6, 'Problemas de logística y acceso a zonas remotas'),
+(19, 6, 'Financiamiento y sostenibilidad del proyecto'),
+(20, 7, 'Sí'),
+(21, 7, 'No'),
+(22, 8, 'Acercan los servicios médicos esenciales.'),
+(23, 9, '10'), 
+(24, 9, '25'),
+(25, 9, '789'),
+(26, 9, '45'),
+(27, 9, '3'),
+(28, 10, 'Muy efectiva'),
+(29, 10, 'Efectiva'),
+(30, 10, 'Regular'),
+(31, 10, 'Poco efectiva'),
+(32, 10, 'Nada efectiva'),
+(33, 11, 'Roble'),
+(34, 11, 'Almendro'),
+(35, 11, 'Cedro'),
+(36, 11, 'Guanacaste'),
+(37, 11, 'Ceiba'),
+(38, 11, 'Pino'),
+(39, 12, 'Sí'),
+(40, 12, 'No'),
+(41, 13, 'Aumenta la biodiversidad.'),
+(42, 14, 'Programación'),
+(43, 14, 'Inteligencia Artificial'),
+(44, 14, 'Ciberseguridad'),
+(45, 14, 'Desarrollo Web'),
+(46, 14, 'Machine Learning'),
+(47, 14, 'Análisis de Datos'),
+(48, 15, 'Sí'),
+(49, 15, 'No'),
+(50, 16, 'Muy efectiva'),
+(51, 16, 'Efectiva'),
+(52, 16, 'Regular'),
+(53, 16, 'Poco efectiva'),
+(54, 16, 'Nada efectiva'),
+(55, 17, 'Inteligencia Artificial.'),
+(56, 18, 'Financiación de proyectos y becas'),
+(57, 18, 'Espacios para exposiciones y difusión'),
+(58, 19, 'Sí'),
+(59, 19, 'No'),
+(60, 20, 'Impulsa el talento local.'),
+(61, 21, '5'), 
+(62, 21, '6'),
+(63, 21, '5'),
+(64, 21, '48'),
+(65, 21, '16'),
+(66, 21, '32'),
+(67, 21, '3'),
+(68, 22, 'Muy accesible'),
+(69, 22, 'Accesible'),
+(70, 22, 'Regular'),
+(71, 22, 'Poco accesible'),
+(72, 22, 'Nada accesible');
+print 'insertando respuestas participante: ';
+-- Bucle para cada usuario, de manera que cada usuario haya contestado las 22 preguntas.
+DECLARE @current_user INT = 1;
+DECLARE @num_usuarios INT = 1000;
+DECLARE @num_preguntas INT = 22;
+DECLARE @current_pregunta INT = 1;
+DECLARE @respuestaID INT;
+DECLARE @checksum VARBINARY(500);
+DECLARE @valor VARCHAR(500);
+DECLARE @fechaRespuesta DATETIME;
+DECLARE @ncRespuesta VARBINARY(256);
+DECLARE @tokenGUID UNIQUEIDENTIFIER;
+DECLARE @pesoRespuesta INT;
+DECLARE @contrasenia VARCHAR(50);
+DECLARE @llaveUsuario VARCHAR(100);
+WHILE @current_user <= @num_usuarios
+BEGIN
+    SET @current_pregunta = 1;
+    SET @tokenGUID = NEWID(); 
+    WHILE @current_pregunta <= @num_preguntas
+    BEGIN
+        -- Seleccionar una respuesta aleatoria que pertenezca a la pregunta actual
+        SELECT TOP 1 @respuestaID = mrp.RespuestaID
+        FROM #MapeoRespuestasPreguntas mrp
+        WHERE mrp.PreguntaID = @current_pregunta
+        ORDER BY NEWID();
+
+        SET @checksum = CONVERT(VARBINARY(500), HASHBYTES('SHA2_256', CONVERT(VARCHAR(MAX), NEWID())));
+
+        SELECT TOP 1
+            @respuestaID = mrp.RespuestaID,
+            @valor = mrp.TextoRespuesta
+        FROM #MapeoRespuestasPreguntas mrp
+        WHERE mrp.PreguntaID = @current_pregunta
+        ORDER BY NEWID();
+
+        SET @fechaRespuesta = GETDATE();
+        
+		DECLARE @aa VARBINARY(255) = 
+		(SELECT lo.llaveCifrada FROM pv_llavesUsuarios lo where usuarioID = @current_user);
+
+		SET @contrasenia = (SELECT TOP 1 
+            UPPER(LEFT(nombre, 2)) + 
+            UPPER(LEFT(primerApellido, 2)) + 
+            UPPER(LEFT(segundoApellido, 2)) + 
+            RIGHT(identificacion, 4) 
+        FROM pv_usuarios 
+        WHERE userid = @current_user
+		);
+
+		SET @llaveUsuario = DECRYPTBYPASSPHRASE(@contrasenia, @aa)
+
+		SET @ncRespuesta = ENCRYPTBYPASSPHRASE(@llaveUsuario, CAST(@current_user AS VARCHAR(5)) ) --ENCRIPTA LA LLAVE DEL USUARIO CON SU USER ID
+        
+		SELECT TOP 1 @pesoRespuesta = p.pesoID 
+        FROM dbo.pv_pesoRespuesta p
+        ORDER BY NEWID();
+
+        INSERT INTO dbo.pv_respuestaParticipante (
+            preguntaID,
+            respuestaID,
+            checksum,
+            valor,
+            fechaRespuesta,
+            ncRespuesta,
+            tokenGUID,
+            pesoRespuesta
+        )
+        VALUES (
+            @current_pregunta,
+            @respuestaID,
+            @checksum,
+            @valor,
+            @fechaRespuesta,
+            @ncRespuesta,
+            @tokenGUID,
+            @pesoRespuesta
+        );
+
+        SET @current_pregunta = @current_pregunta + 1;
+    END;
+
+    SET @current_user = @current_user + 1;
+END;
+DROP TABLE #MapeoRespuestasPreguntas;
+GO
+DECLARE @i INT = 0;
+WHILE @i < 100
+BEGIN
+    DECLARE @usuarioID INT, @respuestaParticipanteID INT, @votacionID INT, @ultimaModificacion DATETIME, @checksum VARBINARY(256);
+    
+    -- Obtener IDs aleatorios válidos
+    SELECT @usuarioID = (
+        SELECT TOP 1 usuarioID FROM (
+            SELECT MIN(userId) AS usuarioID FROM pv_usuarios
+            UNION
+            SELECT MAX(userId) FROM pv_usuarios
+        ) AS t ORDER BY NEWID()
+    );
+
+    SELECT @respuestaParticipanteID = (
+        SELECT TOP 1 respuestaParticipanteID FROM (
+            SELECT MIN(respuestaParticipanteID) AS respuestaParticipanteID FROM pv_respuestaParticipante
+            UNION
+            SELECT MAX(respuestaParticipanteID) FROM pv_respuestaParticipante
+        ) AS t ORDER BY NEWID()
+    );
+
+    SELECT @votacionID = (
+        SELECT TOP 1 votacionID FROM (
+            SELECT MIN(votacionId) AS votacionID FROM pv_votacion
+            UNION
+            SELECT MAX(votacionId) FROM pv_votacion
+        ) AS t ORDER BY NEWID()
+    );
+
+    SET @ultimaModificacion = DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % 100000, '2025-01-01');
+
+    -- Generar un checksum (por ejemplo usando HASHBYTES con SHA2_256)
+    SET @checksum = HASHBYTES('SHA2_256', 
+        CAST(@usuarioID AS VARCHAR(10)) + 
+        CAST(@respuestaParticipanteID AS VARCHAR(10)) + 
+        CAST(@votacionID AS VARCHAR(10)) + 
+        CONVERT(VARCHAR(30), @ultimaModificacion, 126)
+    );
+
+    -- Insertar el registro
+    INSERT INTO dbo.pv_usuarioVotacionPublica (
+        usuarioID,
+        respuestaParticipanteID,
+        checksum,
+        ultimaModificacion,
+        votacionID
+    )
+    VALUES (
+        @usuarioID,
+        @respuestaParticipanteID,
+        @checksum,
+        @ultimaModificacion,
+        @votacionID
+    );
+
+    SET @i += 1;
+END
+
 
 -- Limpiar tablas temporales
 DROP TABLE #DescripcionesInversion;

@@ -4471,47 +4471,34 @@ BEGIN
 END;
 DROP TABLE #MapeoRespuestasPreguntas;
 GO
+DECLARE @minUsuarioID INT, @maxUsuarioID INT;
+SELECT @minUsuarioID = MIN(userId), @maxUsuarioID = MAX(userId) FROM pv_usuarios;
+
+DECLARE @minRespID INT, @maxRespID INT;
+SELECT @minRespID = MIN(respuestaParticipanteID), @maxRespID = MAX(respuestaParticipanteID) FROM pv_respuestaParticipante;
+
+DECLARE @minVotacionID INT, @maxVotacionID INT;
+SELECT @minVotacionID = MIN(votacionId), @maxVotacionID = MAX(votacionId) FROM pv_votacion;
+
 DECLARE @i INT = 0;
 WHILE @i < 100
 BEGIN
     DECLARE @usuarioID INT, @respuestaParticipanteID INT, @votacionID INT, @ultimaModificacion DATETIME, @checksum VARBINARY(256);
-    
-    -- Obtener IDs aleatorios válidos
-    SELECT @usuarioID = (
-        SELECT TOP 1 usuarioID FROM (
-            SELECT MIN(userId) AS usuarioID FROM pv_usuarios
-            UNION
-            SELECT MAX(userId) FROM pv_usuarios
-        ) AS t ORDER BY NEWID()
-    );
 
-    SELECT @respuestaParticipanteID = (
-        SELECT TOP 1 respuestaParticipanteID FROM (
-            SELECT MIN(respuestaParticipanteID) AS respuestaParticipanteID FROM pv_respuestaParticipante
-            UNION
-            SELECT MAX(respuestaParticipanteID) FROM pv_respuestaParticipante
-        ) AS t ORDER BY NEWID()
-    );
-
-    SELECT @votacionID = (
-        SELECT TOP 1 votacionID FROM (
-            SELECT MIN(votacionId) AS votacionID FROM pv_votacion
-            UNION
-            SELECT MAX(votacionId) FROM pv_votacion
-        ) AS t ORDER BY NEWID()
-    );
+    SET @usuarioID = FLOOR(RAND() * (@maxUsuarioID - @minUsuarioID + 1)) + @minUsuarioID;
+    SET @respuestaParticipanteID = FLOOR(RAND() * (@maxRespID - @minRespID + 1)) + @minRespID;
+    SET @votacionID = FLOOR(RAND() * (@maxVotacionID - @minVotacionID + 1)) + @minVotacionID;
 
     SET @ultimaModificacion = DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % 100000, '2025-01-01');
 
-    -- Generar un checksum (por ejemplo usando HASHBYTES con SHA2_256)
-    SET @checksum = HASHBYTES('SHA2_256', 
-        CAST(@usuarioID AS VARCHAR(10)) + 
-        CAST(@respuestaParticipanteID AS VARCHAR(10)) + 
-        CAST(@votacionID AS VARCHAR(10)) + 
-        CONVERT(VARCHAR(30), @ultimaModificacion, 126)
+    SET @checksum = HASHBYTES(
+        'SHA2_256',
+        ISNULL(CAST(@usuarioID AS VARCHAR(10)), '') +
+        ISNULL(CAST(@respuestaParticipanteID AS VARCHAR(10)), '') +
+        ISNULL(CAST(@votacionID AS VARCHAR(10)), '') +
+        ISNULL(CONVERT(VARCHAR(30), @ultimaModificacion, 126), '')
     );
 
-    -- Insertar el registro
     INSERT INTO dbo.pv_usuarioVotacionPublica (
         usuarioID,
         respuestaParticipanteID,

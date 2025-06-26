@@ -1558,7 +1558,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[pv_propuestaVotacion](
-	[propuestaVotacionID] [int] NOT NULL,
+	[propuestaVotacionID] [int] IDENTITY(1,1) NOT NULL,
 	[votacionID] [int] NOT NULL,
 	[propuestaID] [int] NOT NULL,
 	[usuarioID] [int] NOT NULL,

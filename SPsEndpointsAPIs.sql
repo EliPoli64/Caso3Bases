@@ -43,7 +43,6 @@ BEGIN
 
         IF @EsNueva = 1
 			BEGIN
-				SELECT HASHBYTES('SHA2_256', CONCAT_WS('|',@CategoriaID,@Descripcion,@ImgURL,@FechaInicio,@UsuarioAccion,@FechaFin,@Comentarios,@TipoPropuestaID,@OrganizacionID));
 				INSERT dbo.pv_propuestas
 				( categoriaid, descripcion, imgURL, fechaInicio,
 				  userid, fechaFin, checksum, comentarios,
@@ -57,6 +56,7 @@ BEGIN
 														FROM dbo.pv_estadoPropuesta
 														WHERE nombreEstado = N'En Revision' ),
 				  @OrganizacionID );
+				SELECT 'Propuesta creada.';
 
 				SET @PropuestaID = SCOPE_IDENTITY();
 			END
@@ -174,8 +174,8 @@ BEGIN
           (SELECT TOP 1 tipologid 
 			FROM dbo.pv_logTipos 
 			WHERE nombre = IIF(@EsNueva = 1, 'PropuestaCreada', 'PropuestaActualizada')),
-          (SELECT TOP 1 origenlogid FROM dbo.pv_logOrigen WHERE nombre='API'),
-          (SELECT TOP 1 logseveridadid FROM dbo.pv_severidadLogs WHERE nombre='Info') );
+			2, -- api rest
+            2); -- info
 
         COMMIT;
 

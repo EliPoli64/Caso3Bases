@@ -900,7 +900,8 @@ VALUES
     ('Factura'),
     ('Contrato'),
     ('Recibo'),
-    ('Comprobante');
+    ('Comprobante'),
+    ('Sensible');
 GO
 
 INSERT INTO pv_estadoDocumento

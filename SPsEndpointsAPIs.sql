@@ -1,7 +1,7 @@
 CREATE PROCEDURE dbo.crearActualizarPropuesta
 (
     @PropuestaID           INT             = NULL,      -- NULL = nueva
-    @CategoriaID           INT,
+    @CategoriaID           INT, -- A
     @Descripcion           VARCHAR(200)    = NULL,
     @ImgURL                VARCHAR(300)    = NULL,
     @FechaInicio           DATETIME        = NULL,

@@ -245,7 +245,7 @@ BEGIN
         IF @@TRANCOUNT = 0
         BEGIN TRAN; SET @tranStarted = 1;
 
-        /* 1. Validar estado del proyecto */
+        -- 1. Validar estado del proyecto 
         DECLARE @EstadoAprobado INT;
         SELECT @EstadoAprobado = estadoID
         FROM pv_estadoProyecto
@@ -254,20 +254,20 @@ BEGIN
         IF NOT EXISTS (SELECT 1 FROM pv_proyectos WHERE proyectoID = @ProyectoId AND estadoID = @EstadoAprobado)
         BEGIN RAISERROR('El proyecto no esta aprobado para inversion', 16, 1); END
 
-        /* 2. Calcular equity */
+        --2. Calcular equity 
         DECLARE @ValorTotal DECIMAL(18,2) = (SELECT valorMeta FROM pv_proyectos WHERE proyectoID = @ProyectoId);
         DECLARE @Equity DECIMAL(10,5) = @Monto / @ValorTotal;
 
-        /* 3. Validar overflow */
+        -- 3. Validar overflow 
         DECLARE @Acumulado DECIMAL(18,2) = ISNULL((SELECT SUM(monto) FROM pv_inversion WHERE proyectoID = @ProyectoId),0);
         IF @Acumulado + @Monto > @ValorTotal
         BEGIN RAISERROR('La inversion excede el monto requerido', 16, 1); END
 
-        /* 4. Insertar inversion */
+        -- 4. Insertar inversion 
         INSERT INTO pv_inversion (proyectoID, inversorID, monto, monedaID, fechaInversion)
         VALUES (@ProyectoId, @InversorId, @Monto, @MonedaId, SYSDATETIME());
 
-        /* 5. Calendario de revision (ejemplo simple, 12 tramos mensuales) */
+        -- 5. Calendario de revision (ejemplo simple, 12 tramos mensuales) 
         DECLARE @i INT = 1;
         WHILE @i <= 12
         BEGIN
@@ -287,140 +287,168 @@ BEGIN
     END CATCH
 END;
 GO
-
-CREATE PROCEDURE sp_repartirDividendos
-    @proyectoID INT,
-    @montoGanancia DECIMAL(18,2)
+CREATE OR ALTER PROCEDURE dbo.sp_RepartirDividendos
 AS
 BEGIN
     SET NOCOUNT ON;
+    DECLARE 
+        @proyectoID INT,
+        @reporteID INT,
+        @montoGanancia DECIMAL(18,2),
+        @totalInversion DECIMAL(18,2),
+        @usuarioID INT,
+        @montoDistribuido DECIMAL(18,2),
+        @transaccionID BIGINT,
+        @fechaActual DATETIME = GETDATE(),
+        @hashVerificacion VARBINARY(256),
+        @descripcionLog VARCHAR(100) = 'Reparto de Dividendos',
+        @errorMsg VARCHAR(500),
+        @logMessage VARCHAR(100),
+        @logID INT,
+        @intentoPagoID INT;  -- Declarado aquí para evitar duplicados
+
     BEGIN TRY
         BEGIN TRANSACTION;
 
-        -- Validar que el proyecto esté activo (excluyendo estados no válidos)
-        IF NOT EXISTS (
-            SELECT 1
-            FROM pv_proyecto
-            WHERE proyectoID = @proyectoID AND estadoID NOT IN (4, 5, 6, 9) -- Cancelado, Rechazado, Revisión, Postergado
-        )
-        BEGIN
-            RAISERROR('El proyecto no está activo.', 16, 1);
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END
+        -- 1. Validar proyecto con fiscalización aprobada
+        SELECT TOP 1 
+            @proyectoID = rg.proyectoID, 
+            @reporteID = rg.reporteID, 
+            @montoGanancia = rg.montoGanancia
+        FROM pv_reporteGanancias rg
+        INNER JOIN pv_proyecto p ON rg.proyectoID = p.proyectoID
+        INNER JOIN pv_fiscalizacionGanancias fg ON rg.reporteID = fg.reporteID
+        WHERE p.estadoID NOT IN (4, 5, 6, 9)
+          AND fg.estadoFiscalizacionID = 2
+          AND rg.validado = 1
+          AND NOT EXISTS (
+                SELECT 1 
+                FROM pv_distribucionDividendos dd 
+                WHERE dd.proyectoID = rg.proyectoID
+            );
 
-        -- Verificar que tiene al menos una fiscalización aprobada
-        IF NOT EXISTS (
-            SELECT 1 FROM pv_etapasProyecto
-            WHERE proyectoID = @proyectoID
-            AND statusEtapaProyID IN (
-                SELECT statusEtapaProyID FROM pv_statusEtapaProyecto WHERE nombre = 'Aprobada'
-            )
-        )
+        IF @proyectoID IS NULL
         BEGIN
-            RAISERROR('No hay fiscalizaciones aprobadas.', 16, 1);
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END
+            SET @errorMsg = 'No hay proyectos válidos con fiscalización aprobada.';
+            RAISERROR(@errorMsg, 16, 1);
+        END;
 
-        -- Verificar que haya un reporte de ganancia aprobado
-        IF NOT EXISTS (
-            SELECT 1 FROM pv_reporteGanancias
-            WHERE proyectoID = @proyectoID AND validado = 1
-        )
-        BEGIN
-            RAISERROR('No hay reporte de ganancias aprobado para este proyecto.', 16, 1);
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END
-
-        -- Consulta de inversionistas con equity
-        SELECT i.usuarioID, i.transaccionID, t.monto,
-               t.monto / SUM(t.monto) OVER(PARTITION BY i.proyectoID) AS porcentajeParticipacion
-        INTO #Inversionistas
+        -- 2. Calcular total invertido
+        SELECT @totalInversion = SUM(CAST(t.monto AS DECIMAL(18,2)))
         FROM pv_inversion i
         INNER JOIN pv_transaccion t ON i.transaccionID = t.transaccionID
         WHERE i.proyectoID = @proyectoID;
 
-        -- Validar que todos tengan métodos de pago
-        IF EXISTS (
-            SELECT 1 FROM #Inversionistas inv
-            WHERE NOT EXISTS (
-                SELECT 1 FROM pv_metodosPagoUsuarios mpu
-                WHERE mpu.usuarioID = inv.usuarioID
-            )
-        )
-        BEGIN
-            RAISERROR('Algunos inversionistas no tienen método de pago.', 16, 1);
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END
+        -- 3. Calcular equity por inversionista
+        DECLARE investor_cursor CURSOR LOCAL FORWARD_ONLY FOR
+        SELECT 
+            i.usuarioID,
+            (CAST(t.monto AS DECIMAL(18,2)) / @totalInversion) * @montoGanancia
+        FROM pv_inversion i
+        INNER JOIN pv_transaccion t ON i.transaccionID = t.transaccionID
+        WHERE i.proyectoID = @proyectoID;
 
-        -- Variables para iteración
-        DECLARE @usuarioID INT, @montoDistribuido DECIMAL(18,2), @transaccionID INT, @referencia NVARCHAR(50);
-        DECLARE @hashVerificacion VARBINARY(32);
-
-        -- Cursor para distribuir dividendos
-        DECLARE cur CURSOR FOR
-            SELECT usuarioID,
-                   ROUND(porcentajeParticipacion * @montoGanancia, 2) AS montoDistribuido
-            FROM #Inversionistas;
-
-        OPEN cur;
-        FETCH NEXT FROM cur INTO @usuarioID, @montoDistribuido;
+        OPEN investor_cursor;
+        FETCH NEXT FROM investor_cursor INTO @usuarioID, @montoDistribuido;
 
         WHILE @@FETCH_STATUS = 0
         BEGIN
-            SET @referencia = CONCAT('DIV-', NEWID());
+            -- 4. Validar medio de depósito
+            IF NOT EXISTS (
+                SELECT 1 
+                FROM pv_metodosPagoUsuarios 
+                WHERE usuarioID = @usuarioID
+            )
+            BEGIN
+                SET @errorMsg = CONCAT('Inversionista ', @usuarioID, ' sin medio de depósito registrado.');
+                RAISERROR(@errorMsg, 16, 1);
+            END;
 
-            -- Insertar transacción
+            -- 5. Insertar intento de pago 
+            INSERT INTO pv_intentoPago (
+                monto, actualMonto, resultado, numeroAuth, reference, tokenCargo, 
+                descripcion, fecha, checksum, metodoPagoID, monedaID
+            ) VALUES (
+                @montoDistribuido, @montoDistribuido, 'success', 
+                'AUTH-' + CAST(@reporteID AS VARCHAR(10)), 
+                'REF-' + CAST(@reporteID AS VARCHAR(10)), 
+                HASHBYTES('SHA2_256', CONVERT(VARCHAR(50), @fechaActual)),
+                'Pago de dividendos', @fechaActual, 
+                HASHBYTES('SHA2_256', 'checksum'), 
+                1, 1
+            );
+            SET @intentoPagoID = SCOPE_IDENTITY();  -- Asignación sin DECLARE
+
+            -- 6. Insertar transacción de pago 
             INSERT INTO pv_transaccion (
-                usuarioID, proyectoID, monto, descripcion,
-                fechaTransaccion, fechaRegistro, referencia
-            )
-            VALUES (
-                @usuarioID, @proyectoID, @montoDistribuido,
-                'Distribución de dividendos',
-                GETDATE(), GETDATE(), @referencia
+                usuarioID, proyectoID, monto, descripcion, 
+                fechaTransaccion, fechaRegistro, referencia, checksum,
+                subTipoTransaccionID, tasaCambioID, intentoPagoID
+            ) VALUES (
+                @usuarioID, @proyectoID, @montoDistribuido, 'Pago de dividendos',
+                @fechaActual, @fechaActual, 
+                CONCAT('DIV-', CAST(@reporteID AS VARCHAR(10))),
+                HASHBYTES('SHA2_256', CONCAT(
+                    CAST(@usuarioID AS VARCHAR(20)),
+                    CAST(@montoDistribuido AS VARCHAR(50)),
+                    CAST(@fechaActual AS VARCHAR(50))
+                )),
+                1, 1, @intentoPagoID
             );
+            SET @transaccionID = SCOPE_IDENTITY();  -- Asignación sin DECLARE
 
-            -- Obtener ID de la transacción generada
-            SET @transaccionID = SCOPE_IDENTITY();
-
-            -- Generar hash de verificación (SHA-256 simulado con HASHBYTES)
-            SET @hashVerificacion = HASHBYTES('SHA2_256', 
-                CONVERT(NVARCHAR, @proyectoID) + '-' +
-                CONVERT(NVARCHAR, @usuarioID) + '-' +
-                CONVERT(NVARCHAR, @transaccionID) + '-' +
-                CONVERT(NVARCHAR, @montoDistribuido) + '-' +
-                CONVERT(NVARCHAR, GETDATE(), 126)
-            );
-
-            -- Insertar ciclo de distribución
+            -- 7. Registrar distribución
+            SET @hashVerificacion = HASHBYTES('SHA2_256', CONCAT(
+                CAST(@usuarioID AS VARCHAR(20)),
+                CAST(@montoDistribuido AS VARCHAR(50)),
+                CAST(@fechaActual AS VARCHAR(50))
+            ));
             INSERT INTO pv_distribucionDividendos (
-                proyectoID, usuarioID, transaccionID,
-                montoDistribuido, fechaDistribucion, hashVerificacion
-            )
-            VALUES (
+                proyectoID, usuarioID, transaccionID, 
+                montoDistribuido, fechaDistribucion, hashVerificacion --checksum
+            ) VALUES (
                 @proyectoID, @usuarioID, @transaccionID,
-                @montoDistribuido, GETDATE(), @hashVerificacion
+                @montoDistribuido, @fechaActual, @hashVerificacion
             );
 
-            FETCH NEXT FROM cur INTO @usuarioID, @montoDistribuido;
-        END
+            FETCH NEXT FROM investor_cursor INTO @usuarioID, @montoDistribuido;
+        END;
 
-        CLOSE cur;
-        DEALLOCATE cur;
+        CLOSE investor_cursor;
+        DEALLOCATE investor_cursor;
 
         COMMIT TRANSACTION;
-        PRINT CONCAT('Distribución realizada para proyecto ', @proyectoID, ' con ganancia ', @montoGanancia);
+
+        -- 8. Preparar y registrar log
+        SET @logMessage = 'Monto: ' + CAST(@montoGanancia AS VARCHAR(20));
+        EXEC @logID = dbo.SP_InsertarLog 
+            @descripcion = @descripcionLog,
+            @trace = 'Éxito',
+            @tipologid = 1,
+            @origenlogid = 1,
+            @logseveridadid = 1,
+            @usuario = 'sistema',
+            @computador = 'azure-function',
+            @refId1 = @proyectoID,
+            @valor1 = @logMessage;
+
     END TRY
     BEGIN CATCH
-        ROLLBACK TRANSACTION;
-        DECLARE @msg NVARCHAR(4000) = ERROR_MESSAGE();
-        RAISERROR(@msg, 16, 1);
-    END CATCH
-SELECT * FROM pv_transaccion WHERE descripcion = 'Distribución de dividendos' AND proyectoID = @proyectoID;
+        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+        SET @errorMsg = ERROR_MESSAGE();
 
-SELECT * FROM pv_distribucionDividendos WHERE proyectoID = @proyectoID;
+        -- Registrar error en bitácora
+        EXEC dbo.SP_InsertarLog 
+            @descripcion = @descripcionLog,
+            @trace = @errorMsg,
+            @tipologid = 3,
+            @origenlogid = 1,
+            @logseveridadid = 3,
+            @usuario = 'sistema',
+            @computador = 'azure-function',
+            @refId1 = @proyectoID;
+
+        THROW;
+    END CATCH;
 END;
+GO

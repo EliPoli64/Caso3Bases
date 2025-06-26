@@ -4431,6 +4431,7 @@ BEGIN
     SET @i = @i + 1;
 END;
 GO
+SET IDENTITY_INSERT pv_propuestaVotacion ON;
 INSERT INTO pv_propuestaVotacion (
 	propuestaVotacionID,
     votacionID,
@@ -4468,6 +4469,8 @@ INSERT INTO pv_propuestaVotacion (
 (16, 6, 6,89, 0, HASHBYTES('SHA2_256', 'PropuestaVotacion6-6-89')),
 (17, 6,6, 789, 0, HASHBYTES('SHA2_256', 'PropuestaVotacion6-6-789')),
 (18, 6, 6,364, 0, HASHBYTES('SHA2_256', 'PropuestaVotacion6-6-364'));
+
+SET IDENTITY_INSERT pv_propuestaVotacion OFF;
 
 -- Limpiar tablas temporales
 DROP TABLE #DescripcionesInversion;

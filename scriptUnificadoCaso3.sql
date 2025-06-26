@@ -4480,21 +4480,28 @@ SELECT @minRespID = MIN(respuestaParticipanteID), @maxRespID = MAX(respuestaPart
 DECLARE @minVotacionID INT, @maxVotacionID INT;
 SELECT @minVotacionID = MIN(votacionId), @maxVotacionID = MAX(votacionId) FROM pv_votacion;
 
-DECLARE @i INT = 0;
-WHILE @i < 100
+DECLARE @i INT = 1;
+WHILE @i < 101
 BEGIN
-    DECLARE @usuarioID INT, @respuestaParticipanteID INT, @votacionID INT, @ultimaModificacion DATETIME, @checksum VARBINARY(256);
+    DECLARE @votacionID INT, @ultimaModificacion DATETIME, @checksum VARBINARY(256);
 
-    SET @usuarioID = FLOOR(RAND() * (@maxUsuarioID - @minUsuarioID + 1)) + @minUsuarioID;
-    SET @respuestaParticipanteID = FLOOR(RAND() * (@maxRespID - @minRespID + 1)) + @minRespID;
-    SET @votacionID = FLOOR(RAND() * (@maxVotacionID - @minVotacionID + 1)) + @minVotacionID;
+	WHILE 1 = 1
+    BEGIN
+        SET @votacionID = FLOOR(RAND() * (@maxVotacionID - @minVotacionID + 1)) + @minVotacionID;
+
+        IF EXISTS (
+            SELECT 1 FROM pv_votacion 
+            WHERE votacionId = @votacionID AND privada = 0 AND esSecreta = 0
+        )
+            BREAK;
+    END
 
     SET @ultimaModificacion = DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % 100000, '2025-01-01');
 
     SET @checksum = HASHBYTES(
         'SHA2_256',
-        ISNULL(CAST(@usuarioID AS VARCHAR(10)), '') +
-        ISNULL(CAST(@respuestaParticipanteID AS VARCHAR(10)), '') +
+        ISNULL(CAST(@i AS VARCHAR(10)), '') +
+        ISNULL(CAST(@i AS VARCHAR(10)), '') +
         ISNULL(CAST(@votacionID AS VARCHAR(10)), '') +
         ISNULL(CONVERT(VARCHAR(30), @ultimaModificacion, 126), '')
     );
@@ -4507,8 +4514,8 @@ BEGIN
         votacionID
     )
     VALUES (
-        @usuarioID,
-        @respuestaParticipanteID,
+        @i,
+        @i,
         @checksum,
         @ultimaModificacion,
         @votacionID
@@ -4516,7 +4523,6 @@ BEGIN
 
     SET @i += 1;
 END
-
 
 -- Limpiar tablas temporales
 DROP TABLE #DescripcionesInversion;

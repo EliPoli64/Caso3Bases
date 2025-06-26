@@ -1538,7 +1538,7 @@ FROM
 CROSS JOIN
     pv_roles r
 WHERE
-    r.rolId BETWEEN 3 AND 8 -- Solo roles del 3 al 8 -> Excluyendo admin y ciudadano
+    r.rolId BETWEEN 3 AND 9 -- Solo roles del 3 al 9 -> Excluyendo admin y ciudadano
     AND NOT EXISTS ( -- Evitar duplicados (un usuario no puede tener el mismo rol dos veces)
         SELECT 1
         FROM dbo.pv_rolesUsuarios pru
@@ -1552,13 +1552,13 @@ GO --Esta segunda parte, agrega aleatoriamente a 500 usuarios algun otro rol ale
 INSERT INTO pv_usuariosPermisos(userid, permisoId, enabled, deleted, lastUpdate, checksum)
 SELECT
     u.userid,
-    (ABS(CHECKSUM(NEWID())) % 8) + 1 AS permisoId,
+    (ABS(CHECKSUM(NEWID())) % 9) + 1 AS permisoId,
     1 AS enabled,
     0 AS deleted,
     GETDATE() AS lastUpdate,
     CONVERT(VARCHAR(250), HASHBYTES('MD5',
         CONVERT(NVARCHAR(MAX), u.userid) +
-        CONVERT(NVARCHAR(MAX), (ABS(CHECKSUM(NEWID())) % 8) + 1) -- El cálculo aleatorio debe ser el mismo aquí
+        CONVERT(NVARCHAR(MAX), (ABS(CHECKSUM(NEWID())) % 9) + 1) -- El cálculo aleatorio debe ser el mismo aquí
     )) AS checksum
 FROM
     pv_usuarios u

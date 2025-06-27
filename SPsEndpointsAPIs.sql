@@ -485,15 +485,15 @@ BEGIN
     DECLARE @Internal_AI_LLM_Confianza DECIMAL(5,2);
 
     DECLARE @LogDescripcion VARCHAR(100);
-    DECLARE @LogTrace NVARCHAR(MAX); -- CAMBIO: De VARCHAR(100) a NVARCHAR(MAX)
+    DECLARE @LogTrace NVARCHAR(MAX); 
     DECLARE @LogTipoID INT;
-    DECLARE @LogOrigenID INT = 2; -- Asumiendo 2 es 'SP' en pv_origenLog
+    DECLARE @LogOrigenID INT = 2; 
     DECLARE @LogSeveridadID INT;
     DECLARE @LogUsuario VARCHAR(50);
     DECLARE @LogComputador VARCHAR(50) = 'SQL_SERVER_ENGINE'; 
 
     BEGIN TRY
-        BEGIN TRANSACTION;
+        BEGIN TRANSACTION; 
 
         SELECT
             @EstadoActualID = p.estadoID
@@ -505,48 +505,60 @@ BEGIN
         IF @EstadoActualID IS NULL
         BEGIN
             SET @MensajeSalida = 'Error: La propuesta con ID ' + CAST(@PropuestaID AS NVARCHAR) + ' no existe.';
+            
             SET @LogDescripcion = 'Error: Propuesta no encontrada para revisión.';
             SET @LogTrace = 'Intentando revisar propuestaID: ' + CAST(@PropuestaID AS NVARCHAR) + '. Propuesta no existe.';
             SET @LogTipoID = 2; 
             SET @LogSeveridadID = 3; 
             SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A'); 
-            EXEC [dbo].[SP_InsertarLog] 
-                @descripcion = @LogDescripcion, 
-                @trace = @LogTrace, 
-                @tipologid = @LogTipoID, 
-                @origenlogid = @LogOrigenID, 
-                @logseveridadid = @LogSeveridadID, 
-                @usuario = @LogUsuario, 
-                @computador = @LogComputador, 
-                @refId1 = @PropuestaID;
+            
+            SET XACT_ABORT OFF; 
+            BEGIN TRY
+                BEGIN TRANSACTION; 
+                INSERT INTO pv_logs (
+                    descripcion, trace, tipologid, origenlogid, logseveridadid, usuario, computador, refId1, fechaLog
+                )
+                VALUES (
+                    @LogDescripcion, @LogTrace, @LogTipoID, @LogOrigenID, @LogSeveridadID, @LogUsuario, @LogComputador, @PropuestaID, GETUTCDATE()
+                );
+                COMMIT TRANSACTION; 
+            END TRY
+            BEGIN CATCH
+                IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION; 
+            END CATCH;
+            SET XACT_ABORT ON; 
 
-            ROLLBACK TRANSACTION;
+            ROLLBACK TRANSACTION; 
             RETURN 1;
         END;
 
-        IF @EstadoActualID NOT IN ( 5) --Revisa únicamente las propuestas colocadas en revisión
+        IF @EstadoActualID NOT IN (5) 
         BEGIN
             DECLARE @EstadoNombreActual NVARCHAR(50);
             SELECT @EstadoNombreActual = nombreEstado FROM pv_estadoPropuesta WHERE estadoID = @EstadoActualID;
             SET @MensajeSalida = 'Advertencia: La propuesta con ID ' + CAST(@PropuestaID AS NVARCHAR) + ' ya se encuentra en estado "' + @EstadoNombreActual + '". No se puede revisar.';
             
-            -- INVOCACIÓN DEL SP DE LOGS: Estado no válido para revisión
             SET @LogDescripcion = 'Advertencia: Propuesta en estado no revisable.';
             SET @LogTrace = 'PropuestaID: ' + CAST(@PropuestaID AS NVARCHAR) + ' en estado: ' + @EstadoNombreActual;
-            SET @LogTipoID = 3; -- Asumiendo 3 es 'Advertencia' en pv_tipoLog
-            SET @LogSeveridadID = 2; -- Asumiendo 2 es 'Advertencia' en pv_logSeveridad
+            SET @LogTipoID = 3; -- Advertencia
+            SET @LogSeveridadID = 2; -- Advertencia
             SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A');
-            EXEC [dbo].[SP_InsertarLog] 
-                @descripcion = @LogDescripcion, 
-                @trace = @LogTrace, 
-                @tipologid = @LogTipoID, 
-                @origenlogid = @LogOrigenID, -- CAMBIO: Usar la variable @LogOrigenID
-                @logseveridadid = @LogSeveridadID, 
-                @usuario = @LogUsuario, 
-                @computador = @LogComputador, 
-                @refId1 = @PropuestaID,
-                @valor1 = @EstadoNombreActual,
-                @valor2 = @TipoRevision;
+            
+            SET XACT_ABORT OFF;
+            BEGIN TRY
+                BEGIN TRANSACTION;
+                INSERT INTO pv_logs (
+                    descripcion, trace, tipologid, origenlogid, logseveridadid, usuario, computador, refId1, valor1, valor2, fechaLog
+                )
+                VALUES (
+                    @LogDescripcion, @LogTrace, @LogTipoID, @LogOrigenID, @LogSeveridadID, @LogUsuario, @LogComputador, @PropuestaID, @EstadoNombreActual, @TipoRevision, GETUTCDATE()
+                );
+                COMMIT TRANSACTION;
+            END TRY
+            BEGIN CATCH
+                IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+            END CATCH;
+            SET XACT_ABORT ON;
 
             ROLLBACK TRANSACTION;
             RETURN 2; 
@@ -566,7 +578,7 @@ BEGIN
 
         IF @ResultadoFinal = 'Aprobada'
         BEGIN
-            SET @NuevoEstadoID = 6; -- 'Publicada' (Corrección de 1 a 6 según tu script de llenado)
+            SET @NuevoEstadoID = 6; -- 'Aprobada' 
         END
         ELSE IF @ResultadoFinal = 'Rechazada'
         BEGIN
@@ -581,18 +593,24 @@ BEGIN
             SET @LogTipoID = 2; -- Error
             SET @LogSeveridadID = 3; -- Error
             SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A');
-            EXEC [dbo].[SP_InsertarLog] 
-                @descripcion = @LogDescripcion, 
-                @trace = @LogTrace, 
-                @tipologid = @LogTipoID, 
-                @origenlogid = @LogOrigenID, -- CAMBIO: Usar la variable @LogOrigenID
-                @logseveridadid = @LogSeveridadID, 
-                @usuario = @LogUsuario, 
-                @computador = @LogComputador, 
-                @refId1 = @PropuestaID, 
-                @valor1 = @ResultadoFinal;
+            
+            SET XACT_ABORT OFF;
+            BEGIN TRY
+                BEGIN TRANSACTION;
+                INSERT INTO pv_logs (
+                    descripcion, trace, tipologid, origenlogid, logseveridadid, usuario, computador, refId1, valor1, fechaLog
+                )
+                VALUES (
+                    @LogDescripcion, @LogTrace, @LogTipoID, @LogOrigenID, @LogSeveridadID, @LogUsuario, @LogComputador, @PropuestaID, @ResultadoFinal, GETUTCDATE()
+                );
+                COMMIT TRANSACTION;
+            END TRY
+            BEGIN CATCH
+                IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+            END CATCH;
+            SET XACT_ABORT ON;
 
-            ROLLBACK TRANSACTION;
+            ROLLBACK TRANSACTION; 
             RETURN 3;
         END;
 
@@ -602,26 +620,30 @@ BEGIN
         WHERE
             propuestaID = @PropuestaID;
 
-        COMMIT TRANSACTION;
+        COMMIT TRANSACTION; 
         SET @MensajeSalida = 'Revisión de propuesta ' + CAST(@PropuestaID AS NVARCHAR) + ' completada. Estado: ' + @ResultadoFinal + '.';
         
         SET @LogDescripcion = 'Revisión de propuesta completada.';
         SET @LogTrace = 'PropuestaID: ' + CAST(@PropuestaID AS NVARCHAR) + ' ' + @ResultadoFinal + '. RevisorID: ' + CAST(@RevisorID AS NVARCHAR);
-        SET @LogTipoID = 1; -- Asumiendo 1 es 'Auditoria'
-        SET @LogSeveridadID = 1; -- Asumiendo 1 es 'Informativo'
+        SET @LogTipoID = 1; -- Auditoria
+        SET @LogSeveridadID = 1; -- Informativo
         SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A');
-        EXEC [dbo].[SP_InsertarLog] 
-            @descripcion = @LogDescripcion, 
-            @trace = @LogTrace, 
-            @tipologid = @LogTipoID, 
-            @origenlogid = @LogOrigenID, 
-            @logseveridadid = @LogSeveridadID, 
-            @usuario = @LogUsuario, 
-            @computador = @LogComputador, 
-            @refId1 = @PropuestaID, 
-            @refId2 = @RevisorID, 
-            @valor1 = @ResultadoFinal, 
-            @valor2 = @TipoRevision;
+        
+        SET XACT_ABORT OFF;
+        BEGIN TRY
+            BEGIN TRANSACTION;
+            INSERT INTO pv_logs (
+                descripcion, trace, tipologid, origenlogid, logseveridadid, usuario, computador, refId1, refId2, valor1, valor2, fechaLog
+            )
+            VALUES (
+                @LogDescripcion, @LogTrace, @LogTipoID, @LogOrigenID, @LogSeveridadID, @LogUsuario, @LogComputador, @PropuestaID, @RevisorID, @ResultadoFinal, @TipoRevision, GETUTCDATE()
+            );
+            COMMIT TRANSACTION;
+        END TRY
+        BEGIN CATCH
+            IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+        END CATCH;
+        SET XACT_ABORT ON;
 
         RETURN 0;
 
@@ -636,23 +658,27 @@ BEGIN
 
         SET @MensajeSalida = 'Error en usp_RevisarPropuesta: ' + @ErrorMessage;
         
-        SET @LogDescripcion = 'Error al revisar propuesta.';
+        SET @LogDescripcion = 'Error al revisar propuesta (CATCH).';
         SET @LogTrace = 'PropuestaID: ' + CAST(@PropuestaID AS NVARCHAR) + '. Error: ' + @ErrorMessage + '. Linea: ' + CAST(ERROR_LINE() AS NVARCHAR);
         SET @LogTipoID = 2; -- Error
         SET @LogSeveridadID = 3; -- Error
         SET @LogUsuario = ISNULL(CAST(@RevisorID AS VARCHAR(50)), 'N/A');
-        EXEC [dbo].[SP_InsertarLog] 
-            @descripcion = @LogDescripcion, 
-            @trace = @LogTrace, 
-            @tipologid = @LogTipoID, 
-            @origenlogid = @LogOrigenID, -- CAMBIO: Usar la variable @LogOrigenID
-            @logseveridadid = @LogSeveridadID, 
-            @usuario = @LogUsuario, 
-            @computador = @LogComputador, 
-            @refId1 = @PropuestaID, 
-            @refId2 = @RevisorID, 
-            @valor1 = @ResultadoFinal, 
-            @valor2 = @TipoRevision;
+        
+        SET XACT_ABORT OFF;
+        BEGIN TRY
+            BEGIN TRANSACTION;
+            INSERT INTO pv_logs (
+                descripcion, trace, tipologid, origenlogid, logseveridadid, usuario, computador, refId1, refId2, valor1, valor2, fechaLog
+            )
+            VALUES (
+                @LogDescripcion, @LogTrace, @LogTipoID, @LogOrigenID, @LogSeveridadID, @LogUsuario, @LogComputador, @PropuestaID, @RevisorID, @ResultadoFinal, @TipoRevision, GETUTCDATE()
+            );
+            COMMIT TRANSACTION;
+        END TRY
+        BEGIN CATCH
+            IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+        END CATCH;
+        SET XACT_ABORT ON;
 
         RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
         RETURN -1; 

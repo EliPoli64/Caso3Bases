@@ -820,6 +820,33 @@ async def main(req: func.HttpRequest) -> func.HttpResponse:
             status_code=500
         )
 """
+Función principal: main(req: func.HttpRequest) -> func.HttpResponse
+Nombre: procesarInversion
+
+Parámetros de entrada (esperados en el JSON del body según InversionDTO):
+    - proyecto (str): Nombre del proyecto de inversión.
+    - monto (float): Cantidad monetaria a invertir.
+    - moneda (str): Tipo de moneda (ej: 'CRC', 'USD').
+    - cedula (str): Identificación del inversionista.
+    - contrasenna (str): Clave de acceso del inversionista.
+    - organizacion (str | null): Nombre de la organización (opcional).
+    - metodoPago (str): Método de pago utilizado (ej: 'Tarjeta Visa').
+
+Lógica interna:
+    1. Valida la estructura del JSON de entrada usando InversionDTO (Pydantic).
+       - Si falla la validación, retorna error 400 con detalles.
+    2. Ejecuta el stored procedure dbo.invertir con los parámetros proporcionados.
+    3. Maneja la transacción explícitamente con session.commit().
+    4. Procesa los resultados del SP:
+       - Si Resultado = 0: Retorna éxito (201) con datos de la transacción.
+       - Si Resultado ≠ 0: Retorna error (400) con mensaje del SP.
+    5. Convierte campos bytes a Base64 para compatibilidad JSON.
+    6. Maneja errores internos retornando 500 con mensaje genérico.
+
+Flujo de ejecución:
+    1. Validación de entrada → 2. Ejecución SP → 3. Procesamiento resultados → 4. Respuesta HTTP
+
+Ejemplo de uso:
 {
   "proyecto": "Mejora Transporte Público",
   "monto": 50000.00,
@@ -827,8 +854,23 @@ async def main(req: func.HttpRequest) -> func.HttpResponse:
   "cedula": "100000000",
   "contrasenna": "JUGAHE0000",
   "organizacion": null,
-  "metodoPago": "Tarjeta Visa"
+  "metodoPago": "Tarjeta Visa"
 }
+
+Estructura de respuesta exitosa (201):
+{
+  "mensaje": "Inversión registrada exitosamente",
+  "transaccion_id": 42,
+  "referencia": "INV-2023-0042",
+  "monto_invertido": 50000.00,
+  "numero_autorizacion": "AUTH-123456"
+}
+
+Estructura de error (400/500):
+{
+  "error": "Mensaje descriptivo del error"
+}
+
 """
 ```
 #### SQL Stored Procedure  

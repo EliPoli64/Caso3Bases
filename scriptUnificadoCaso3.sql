@@ -2765,11 +2765,11 @@ VALUES ('Propuesta'),
 
 INSERT INTO pv_propuestas (categoriaid,descripcion,imgURL,fechaInicio,userid,fechaFin,checksum,comentarios,tipoPropuestaID,estadoID,organizacionID) 
 VALUES
-(1, 'Propuesta para la mejora y ampliación de la red de transporte público en la capital, incluyendo nuevas rutas de autobús y carriles exclusivos para bicicletas.', NULL , '2025-06-09 09:00:00', 1, '2026-03-15 17:00:00', HASHBYTES('SHA2_256', 'Propuesta Infraestructura 1'), 1, 2, 1, NULL),
-(2, 'Implementación de un programa de becas para estudiantes de bajos recursos en áreas rurales, cubriendo costos de matrícula, materiales y transporte.', NULL, '2024-06-01 10:30:00', 10, NULL, HASHBYTES('SHA2_256', 'Propuesta Educación 2'), 0, 8, 1, NULL),
+(1, 'Propuesta para la mejora y ampliación de la red de transporte público en la capital, incluyendo nuevas rutas de autobús y carriles exclusivos para bicicletas.', NULL , '2025-06-09 09:00:00', 1, '2026-03-15 17:00:00', HASHBYTES('SHA2_256', 'Propuesta Infraestructura 1'), 1, 2, 5, NULL),
+(2, 'Implementación de un programa de becas para estudiantes de bajos recursos en áreas rurales, cubriendo costos de matrícula, materiales y transporte.', NULL, '2024-06-01 10:30:00', 10, NULL, HASHBYTES('SHA2_256', 'Propuesta Educación 2'), 0, 8, 5, NULL),
 (3, 'Establecimiento de clínicas móviles en zonas periurbanas para ofrecer servicios de atención primaria y vacunación periódica.', NULL, '2024-04-20 08:00:00', 100, '2025-04-20 18:00:00', HASHBYTES('SHA2_256', 'Propuesta Salud 3'), 1, 9, 2, NULL),
 (4, 'Campaña nacional de reforestación en áreas degradadas, con la participación de voluntarios y el uso de especies nativas.', NULL, '2024-07-01 07:00:00', 89, NULL, HASHBYTES('SHA2_256', 'Propuesta Ambiente 4'), 1, 10, 1, NULL),
-(5, 'Creación de centros de innovación y tecnología en cada provincia para fomentar el desarrollo de startups locales y la formación en habilidades digitales.', NULL, '2024-05-10 11:00:00', 789, '2025-05-10 16:00:00', HASHBYTES('SHA2_256', 'Propuesta Tecnología 5'), 0, 5, 2, NULL),
+(5, 'Creación de centros de innovación y tecnología en cada provincia para fomentar el desarrollo de startups locales y la formación en habilidades digitales.', NULL, '2024-05-10 11:00:00', 789, '2025-05-10 16:00:00', HASHBYTES('SHA2_256', 'Propuesta Tecnología 5'), 0, 5, 5, NULL),
 (6, 'Programa de apoyo a artistas emergentes, con fondos para la producción de obras y espacios para exposiciones y presentaciones públicas.', NULL, '2024-02-28 14:00:00', 364, NULL, HASHBYTES('SHA2_256', 'Propuesta Cultura 6'), 1, 7, 1, NULL);
 
 
@@ -4388,7 +4388,7 @@ INSERT INTO #MapeoRespuestasPreguntas (RespuestaID, PreguntaID, TextoRespuesta) 
 print 'insertando respuestas participante: ';
 -- Bucle para cada usuario, de manera que cada usuario haya contestado las 22 preguntas.
 DECLARE @current_user INT = 1;
-DECLARE @num_usuarios INT = 1000;
+DECLARE @num_usuarios INT = 500;
 DECLARE @num_preguntas INT = 22;
 DECLARE @current_pregunta INT = 1;
 DECLARE @respuestaID INT;

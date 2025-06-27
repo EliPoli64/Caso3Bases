@@ -450,6 +450,62 @@ async def main(req: func.HttpRequest) -> func.HttpResponse:
     "tipo_revision": "Combinada"
     }
     """
+"""
+Documentación de Función de Azure: `revisarPropuesta`
+
+Esta documentación describe la funcionalidad de la función `main`, que actúa como un endpoint de API de Azure Functions para gestionar la revisión de propuestas mediante la ejecución de un Stored Procedure en SQL Server.
+
+### 1. Descripción General
+
+La función `revisarPropuesta` es un endpoint HTTP trigger diseñado para procesar las revisiones de propuestas en un sistema. Recibe los detalles de la revisión (ID de propuesta, ID de revisor, resultado, comentarios y tipo de revisión) a través de un cuerpo de solicitud JSON, valida los datos y luego invoca un Stored Procedure de SQL Server (`dbo.usp_RevisarPropuesta`) para aplicar los cambios y obtener una respuesta de la base de datos.
+
+### 2. Parámetros de Entrada (JSON en el `body` de la solicitud POST)
+
+La función espera un JSON en el cuerpo de la solicitud HTTP POST, que debe coincidir con la estructura del DTO `RevisarPropuestaDTO`. Los nombres de los campos en el DTO deben corresponder a los parámetros esperados por el Stored Procedure.
+
+| Parámetro           | Tipo    | Descripción                                             | Ejemplo                 |
+| :------------------ | :------ | :------------------------------------------------------ | :---------------------- |
+| `propuesta_id`      | `int`   | Identificador único de la propuesta a revisar.          | `123`                   |
+| `revisor_id`        | `int`   | Identificador único del revisor que realiza la acción.  | `456`                   |
+| `resultado_final`   | `str`   | El resultado final de la revisión (ej., "Aprobada", "Rechazada", "Pendiente"). | `"Aprobada"`            |
+| `comentarios_revision` | `str` | Comentarios detallados sobre la revisión.               | `"Cumple con todos los criterios"` |
+| `tipo_revision`     | `str`   | El tipo de revisión realizada (ej., "Inicial", "Final"). | `"Final"`               |
+
+### 3. Lógica Interna y Flujo de Procesamiento
+
+1.  **Validación de Entrada (Pydantic):**
+    * El cuerpo de la solicitud JSON se valida contra el `RevisarPropuestaDTO`.
+    * Si la validación falla (`ValidationError`) o el JSON no es válido (`ValueError`), se registra el error y se retorna un `400 Bad Request` con detalles.
+
+2.  **Preparación y Ejecución del Stored Procedure:**
+    * Se construye la llamada al Stored Procedure `dbo.usp_RevisarPropuesta` usando `sqlalchemy.text`. Esta llamada incluye parámetros de entrada (mapeados desde el DTO) y parámetros de salida (`@output_message`, `@return_code`).
+    * Se obtiene una sesión asíncrona de la base de datos (`async with get_session() as session`).
+    * Los datos del DTO se convierten a un diccionario (`dto.dict()`) para ser pasados como parámetros al SP.
+    * Se ejecuta el Stored Procedure (`await session.execute(sp_call, params)`).
+    * Se realiza un `session.commit()` para asegurar que cualquier cambio realizado por el SP se persista en la base de datos.
+
+3.  **Procesamiento de Resultados del Stored Procedure:**
+    * Se recuperan todas las filas del resultado del SP (`result.fetchall()`).
+    * Se verifica que se hayan recibido filas del SP. Si no hay, se retorna un `500 Internal Server Error`.
+    * La primera fila del resultado se convierte en un diccionario Python usando `dict(rows[0]._mapping)`. Esto extrae los valores de los parámetros de salida del SP (`ReturnCode` y `MensajeSalida`).
+    * Se extraen los valores de `ReturnCode` y `MensajeSalida` del diccionario resultante.
+
+4.  **Generación de Respuesta HTTP:**
+    * Se construye un payload de respuesta JSON que incluye el `status` (por defecto "success"), el `message` (`MensajeSalida` del SP) y el `sp_return_code`.
+    * Si `sp_return_code` es diferente de `0` (lo que indica un error desde el SP), el `status` del payload se cambia a "error" y el código de estado HTTP se establece en `400 Bad Request`.
+    * Finalmente, se devuelve una `func.HttpResponse` con el payload JSON y el código de estado HTTP apropiado.
+
+### 4. Estructura de Respuesta Exitosa (HTTP 200 OK)
+
+En caso de que el Stored Procedure `usp_RevisarPropuesta` retorne un `ReturnCode` de `0`, la función devolverá un JSON con el siguiente formato:
+
+```json
+{
+    "status": "success",
+    "message": "Mensaje de salida del Stored Procedure",
+    "sp_return_code": 0
+}
+"""
 ```
 #### SQL Stored Procedure  
 ```sql

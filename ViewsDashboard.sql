@@ -1,85 +1,86 @@
 /*
-OJO
-EJECUTAR CREATES UNO POR UNO
-SINO NO SIRVE
-gracias
+
+EJECUTAR UNO POR UNO
+VISTAS PARA POWERBI
+
 */
 
+CREATE VIEW dbo.vw_votacionesRecientes
+AS
+SELECT V.titulo, V.descripcion, V.nombre AS tipoPropuesta, V.fechaInicio, V.fechaFin, EV.nombre AS estado, P.enunciado AS pregunta, RP.valor, COUNT(RP.valor) AS CantidadVotos
+FROM     (SELECT TOP (5) VT.votacionID, VT.titulo, VT.descripcion, VT.fechaInicio, VT.fechaFin, VT.estadoVotacionID, TV.nombre
+                  FROM      dbo.pv_votacion AS VT INNER JOIN
+                                    dbo.pv_tipoVotacion AS TV ON TV.tipoVotacionID = VT.tipoVotacionID
+                  ORDER BY VT.fechaInicio DESC) AS V INNER JOIN
+                  dbo.pv_estadoVotacion AS EV ON EV.estadoVotacionID = V.estadoVotacionID INNER JOIN
+                  dbo.pv_votacionPregunta AS VP ON VP.votacionID = V.votacionID INNER JOIN
+                  dbo.pv_preguntas AS P ON P.preguntaID = VP.preguntaID INNER JOIN
+                  dbo.pv_respuestaParticipante AS RP ON RP.preguntaID = P.preguntaID INNER JOIN
+                  dbo.pv_propuestaVotacion AS PV ON PV.votacionID = V.votacionID INNER JOIN
+                  dbo.pv_propuestas AS PS ON PS.propuestaid = PV.propuestaID
+WHERE  (P.deleted = 0)
+GROUP BY V.titulo, V.descripcion, V.nombre, V.fechaInicio, V.fechaFin, EV.nombre, P.enunciado, RP.valor
 
-CREATE VIEW vw_PermisosUsuario AS
+CREATE VIEW dbo.vw_verInversiones
+AS
 SELECT 
-    u.userid,
-    u.nombre + ' ' + u.primerApellido AS nombreCompleto,
-    r.name AS rol,
-    p.descripcion AS permiso,
-    p.code AS codigoPermiso
-FROM 
-    pv_usuarios u
-JOIN 
-    pv_rolesUsuarios ru ON u.userid = ru.userId
-JOIN 
-    pv_roles r ON ru.rolId = r.rolId
-LEFT JOIN 
-    pv_usuariosPermisos up ON u.userid = up.userid
-LEFT JOIN 
-    pv_permissions p ON up.permisoId = p.permissionId
-WHERE 
-    ru.enabled = 1 
-    AND ru.deleted = 0
-    AND (up.enabled = 1 OR up.enabled IS NULL)
-    AND (up.deleted = 0 OR up.deleted IS NULL);
+    V.votacionID,
+    PY.proyectoID,
+    PY.montoPedido,  -- monto total solicitado
+    ISNULL(SUM(DISTINCT I.montoInvertido), 0) AS montoInvertido, -- monto recibido por inversión ciudadana
+    ISNULL(SUM(D.monto), 0) AS montoEjecutado -- monto ejecutado según plan de desembolsos
+FROM dbo.pv_proyecto PY
+LEFT JOIN (
+    SELECT I.proyectoID, SUM(ISNULL(T.montoConvertido, T.monto)) AS montoInvertido
+    FROM dbo.pv_inversion I
+    INNER JOIN dbo.pv_transaccion T ON T.transaccionID = I.transaccionID
+    GROUP BY I.proyectoID
+) I ON I.proyectoID = PY.proyectoID
+LEFT JOIN dbo.pv_planPagos D ON D.proyectoID = PY.proyectoID
+INNER JOIN dbo.pv_propuestas P ON P.propuestaid = PY.propuestaID
+INNER JOIN dbo.pv_propuestaVotacion PV ON PV.propuestaID = P.propuestaid
+INNER JOIN dbo.pv_votacion V ON V.votacionID = PV.votacionID
+GROUP BY V.votacionID, PY.proyectoID, PY.montoPedido;
 
-CREATE VIEW vw_ResultadosVotacionRecientes AS
-SELECT TOP 5
-    v.votacionID,
-    v.titulo AS nombreVotacion,
-    v.fechaInicio,
-    v.fechaFin,
-    pv.propuestaID,
-    p.descripcion AS descripcionPropuesta,
-    tp.nombre AS tipoPropuesta,
-    (SELECT COUNT(*) FROM pv_resultadoVotacion WHERE votacionID = v.votacionID) AS totalVotos,
-    CASE 
-        WHEN v.fechaFin > GETDATE() THEN 'Activa'
-        WHEN v.fechaFin <= GETDATE() THEN 'Cerrada'
-        ELSE 'Pendiente'
-    END AS estadoVotacion,
-    ev.nombre AS estadoVotacionNombre
-FROM 
-    pv_votacion v
-JOIN 
-    pv_propuestaVotacion pv ON v.votacionID = pv.votacionID
-JOIN 
-    pv_propuestas p ON pv.propuestaID = p.propuestaID
-JOIN 
-    pv_tiposPropuesta tp ON p.tipoPropuestaID = tp.tipoPropuestaID
-JOIN 
-    pv_estadoVotacion ev ON v.estadoVotacionID = ev.estadoVotacionID
-ORDER BY 
-    v.fechaInicio DESC;
+CREATE VIEW dbo.vw_dashboardVotacionesPublicas
+AS
+SELECT
+    V.votacionID,
+    V.titulo AS tituloVotacion,
+    V.descripcion AS descripcionVotacion,
+    TV.nombre AS tipoVotacion,
+    V.fechaInicio,
+    V.fechaFin,
+    EV.nombre AS estadoVotacion,
+    
+    P.preguntaID,
+    P.enunciado AS pregunta,
+    RP.valor AS valorRespuesta,
+    
+    U.userid,
+    CASE WHEN U.sexo = 1 THEN 'Mujer' WHEN U.sexo = 0 THEN 'Hombre' ELSE 'Otro' END AS sexo,
+    DATEDIFF(YEAR, U.fechaNacimiento, GETDATE()) AS edad,
+    
+    PVS.nombre AS provincia,
+    PS.nombre AS pais,
+    A.nombre AS afiliacion,
+    
+    COUNT(*) OVER (PARTITION BY P.preguntaID, RP.valor) AS cantidadVotosPorRespuesta
 
-CREATE VIEW vw_ResultadosPorPregunta AS
-SELECT 
-    v.votacionID,
-    v.titulo AS nombreVotacion,
-    vpq.preguntaID,
-    pq.enunciado AS pregunta,
-    r.respuestaID,
-    r.respuesta AS respuesta,
-    (SELECT COUNT(DISTINCT rp2.respuestaParticipanteID)
-     FROM pv_respuestaParticipante rp2
-     JOIN pv_votacionPregunta vpq2 ON rp2.preguntaID = vpq2.preguntaID
-     WHERE vpq2.votacionID = v.votacionID) AS totalRespuestas
-FROM 
-    pv_votacion v
-JOIN 
-    pv_votacionPregunta vpq ON v.votacionID = vpq.votacionID
-JOIN 
-    pv_preguntas pq ON vpq.preguntaID = pq.preguntaID
-JOIN 
-    pv_respuestas r ON pq.preguntaID = r.preguntaID
-LEFT JOIN 
-    pv_respuestaParticipante rp ON r.preguntaID = rp.preguntaID AND r.respuestaID = rp.respuestaID
-GROUP BY 
-    v.votacionID, v.titulo, vpq.preguntaID, pq.enunciado, r.respuestaID, r.respuesta;
+FROM dbo.pv_usuarioVotacionPublica UVP
+INNER JOIN dbo.pv_votacion V ON V.votacionID = UVP.votacionID
+INNER JOIN dbo.pv_estadoVotacion EV ON EV.estadoVotacionID = V.estadoVotacionID
+INNER JOIN dbo.pv_tipoVotacion TV ON TV.tipoVotacionID = V.tipoVotacionID
+INNER JOIN dbo.pv_respuestaParticipante RP ON RP.respuestaParticipanteID = UVP.respuestaParticipanteID
+INNER JOIN dbo.pv_preguntas P ON P.preguntaID = RP.preguntaID AND P.deleted = 0
 
+-- Usuario y datos personales
+INNER JOIN dbo.pv_usuarios U ON U.userid = UVP.usuarioID
+INNER JOIN dbo.pv_direccionesUsuarios DU ON DU.userid = U.userid
+INNER JOIN dbo.pv_ubicaciones UB ON UB.ubicacionID = DU.direccionViviendaid
+INNER JOIN dbo.pv_provincias PVS ON PVS.provinciaid = UB.proviniciaID
+INNER JOIN dbo.pv_paises PS ON PS.paisid = UB.paisID
+
+-- Afiliación del usuario
+INNER JOIN dbo.pv_afiliacionesUsuario AU ON AU.usarioID = U.userid
+INNER JOIN dbo.pv_afiliaciones A ON A.afiliacionID = AU.afiliacionID;

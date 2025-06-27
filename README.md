@@ -135,8 +135,9 @@ modificar esa propuesta si no es nula, esto se puede verificar con un simple SEL
   "EquipoOrigen": "ServidorApp01"
 }
 
-SELECT para verificar usuarios:
+SELECTs para verificar usuarios:
 select * from pv_propuestas
+select * from pv_proponente
 
 Bitácora de lo acontecido:
 - Se implementó la ejecución del procedimiento almacenado `crearActualizarPropuesta` usando `sqlalchemy.text`.

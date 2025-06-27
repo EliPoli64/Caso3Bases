@@ -6,8 +6,8 @@
 - Beatríz Díaz Gómez (2024090972)  
 # Endpoints API Serverless:  
 ## Por Stored Procedures:  
-## Crear Actualizar Propuesta:  
-## Python Endpoint  
+### Crear Actualizar Propuesta:  
+#### Python Endpoint  
 ```python
 import json
 import logging
@@ -146,7 +146,7 @@ Bitácora de lo acontecido:
 - Se utiliza `get_session` para obtener una sesión `AsyncSession` con contexto seguro.
 """
 ```
-## SQL Stored Procedure  
+#### SQL Stored Procedure  
 ```sql
 CREATE PROCEDURE dbo.crearActualizarPropuesta
 (

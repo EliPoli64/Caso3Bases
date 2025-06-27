@@ -341,8 +341,8 @@ BEGIN
 END
 GO
 ```
-# Revisar Propuesta:  
-## Python Endpoint  
+### Revisar Propuesta:  
+#### Python Endpoint  
 ```python
 # revisarPropuesta/__init__.py
 import logging
@@ -451,7 +451,7 @@ async def main(req: func.HttpRequest) -> func.HttpResponse:
     }
     """
 ```
-## SQL Stored Procedure  
+#### SQL Stored Procedure  
 ```sql
 CREATE PROCEDURE usp_RevisarPropuesta
     @PropuestaID INT,
@@ -667,8 +667,8 @@ END;
 GO
 
 ```
-# Invertir:  
-## Python Endpoint  
+### Invertir:  
+#### Python Endpoint  
 ```python
 import json
 import logging
@@ -763,7 +763,7 @@ async def main(req: func.HttpRequest) -> func.HttpResponse:
             status_code=500
         )
 ```
-## SQL Stored Procedure  
+#### SQL Stored Procedure  
 ```sql
 CREATE PROCEDURE [dbo].[invertir] 
     @proyecto VARCHAR(50),
@@ -1099,8 +1099,8 @@ AS BEGIN
     END CATCH
 END
 ```
-# Repartir Dividendos:  
-## Python Endpoint  
+### Repartir Dividendos:  
+#### Python Endpoint  
 ```python
 import json
 import logging
@@ -1180,7 +1180,7 @@ Uso recomendado:
     para ejecutar el reparto de dividendos en base a fiscalizaciones validadas y proyectos activos.
 """
 ```
-## SQL Stored Procedure  
+#### SQL Stored Procedure  
 ```sql
 CREATE PROCEDURE sp_RepartirDividendos
 AS
@@ -1350,8 +1350,8 @@ BEGIN
 END;
 
 ```
-# ORM:  
-# Votar:  
+## ORM:  
+#### Votar:  
 ```python
 import azure.functions as func
 from shared.dtos import VotoDTO
@@ -1848,7 +1848,7 @@ En caso de éxito, la función devuelve un JSON con el siguiente formato:
 }
 """
 ```
-# Comentar:    
+### Comentar:    
 ```python
 import json
 import random
@@ -2067,7 +2067,7 @@ Bitácora de lo acontecido:
 """
 
 ```
-# Listar Votos:  
+### Listar Votos:  
 ```python
 from datetime import datetime
 from typing import List
@@ -2471,7 +2471,7 @@ Consideraciones:
     - Máximo 5 respuestas recientes
 """
 ```
-# Configurar Votación:   
+### Configurar Votación:   
 ```python
 import json
 from datetime import datetime

@@ -21,11 +21,6 @@ from pydantic import ValidationError
 def bytesAString(b: bytes) -> str:
     return base64.b64encode(b).decode('utf-8')
 
-def json_bytes_serializer(obj):
-    if isinstance(obj, bytes):
-        return base64.b64encode(obj).decode('utf-8')
-    raise TypeError(f"Type {type(obj)} not serializable")
-
 async def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         dto = CrearActualizarPropuestaDTO(**req.get_json())

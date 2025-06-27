@@ -156,7 +156,7 @@ CREATE PROCEDURE dbo.crearActualizarPropuesta
     @ImgURL                VARCHAR(300)    = NULL,
     @FechaInicio           DATETIME        = NULL,
     @FechaFin              DATETIME        = NULL,
-    @Comentarios           BIT, -- AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    @Comentarios           BIT,
     @TipoPropuestaID       INT,
     @OrganizacionID        INT             = NULL,
     @SegmentosDirigidosJS  NVARCHAR(MAX)   = NULL,      -- ej: [1,2,3]

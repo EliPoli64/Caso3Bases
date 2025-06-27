@@ -819,6 +819,17 @@ async def main(req: func.HttpRequest) -> func.HttpResponse:
             mimetype="application/json",
             status_code=500
         )
+"""
+{
+  "proyecto": "Mejora Transporte Público",
+  "monto": 50000.00,
+  "moneda": "CRC",
+  "cedula": "100000000",
+  "contrasenna": "JUGAHE0000",
+  "organizacion": null,
+  "metodoPago": "Tarjeta Visa"
+}
+"""
 ```
 #### SQL Stored Procedure  
 ```sql

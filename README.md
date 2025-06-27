@@ -4,10 +4,9 @@
 - Carlos García Molina (2024181023)  
 - Elías Ramírez Hernández (2024090300)  
 - Beatríz Díaz Gómez (2024090972)  
-## Diseño General de la Base de Datos:    
-## Endpoints API Serverless:  
-## Stored Procedures:  
-# Crear Actualizar Propuesta:  
+# Endpoints API Serverless:  
+## Por Stored Procedures:  
+## Crear Actualizar Propuesta:  
 ## Python Endpoint  
 ```python
 import json

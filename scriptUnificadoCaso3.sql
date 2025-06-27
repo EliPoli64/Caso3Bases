@@ -4575,3 +4575,5 @@ VALUES
 (6, 1, 50000, 1, 3);
 -- Limpiar tablas temporales
 DROP TABLE #DescripcionesInversion;
+
+
